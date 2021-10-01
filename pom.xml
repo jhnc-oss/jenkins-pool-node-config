@@ -30,6 +30,14 @@
         </license>
     </licenses>
 
+    <url>https://github.com/jhnc-oss/${project.artifactId}</url>
+    <scm>
+        <connection>scm:git:git://github.com/jhnc-oss/${project.artifactId}.git</connection>
+        <developerConnection>scm:git:git@github.com:jhnc-oss/${project.artifactId}.git</developerConnection>
+        <url>${project.url}</url>
+        <tag>HEAD</tag>
+    </scm>
+
     <build>
         <finalName>${project.artifactId}-${project.version}</finalName>
         <plugins>
