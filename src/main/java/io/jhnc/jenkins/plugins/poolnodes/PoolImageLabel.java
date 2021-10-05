@@ -24,21 +24,18 @@
 
 package io.jhnc.jenkins.plugins.poolnodes;
 
-public enum PoolImageLabel
-{
+public enum PoolImageLabel {
     MASTER("vdi-image-master"),
     TEST("vdi-image-test"),
     PRODUCTION("vdi-image-prod");
 
     private final String label;
 
-    PoolImageLabel(String label)
-    {
+    PoolImageLabel(String label) {
         this.label = label;
     }
 
-    public String getLabelName()
-    {
+    public String getLabelName() {
         return label;
     }
 }

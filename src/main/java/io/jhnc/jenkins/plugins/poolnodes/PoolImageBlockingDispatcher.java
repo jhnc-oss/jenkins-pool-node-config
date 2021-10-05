@@ -34,32 +34,25 @@ import hudson.model.queue.CauseOfBlockage;
 import hudson.model.queue.QueueTaskDispatcher;
 
 @Extension
-public class PoolImageBlockingDispatcher extends QueueTaskDispatcher
-{
+public class PoolImageBlockingDispatcher extends QueueTaskDispatcher {
     private final NodeNames nodeNames;
 
-    public PoolImageBlockingDispatcher()
-    {
+    public PoolImageBlockingDispatcher() {
         this(new NodeNames());
     }
 
-    protected PoolImageBlockingDispatcher(@NonNull NodeNames nodeNames)
-    {
+    protected PoolImageBlockingDispatcher(@NonNull NodeNames nodeNames) {
         this.nodeNames = nodeNames;
     }
 
 
     @CheckForNull
     @Override
-    public CauseOfBlockage canTake(Node node, Queue.BuildableItem item)
-    {
-        if (isRestrictedNode(node))
-        {
-            return new CauseOfBlockage()
-            {
+    public CauseOfBlockage canTake(Node node, Queue.BuildableItem item) {
+        if (isRestrictedNode(node)) {
+            return new CauseOfBlockage() {
                 @Override
-                public String getShortDescription()
-                {
+                public String getShortDescription() {
                     return Messages.PoolImageBlockingDispatcher_restricted(node.getNodeName());
                 }
             };
@@ -68,13 +61,11 @@ public class PoolImageBlockingDispatcher extends QueueTaskDispatcher
         return null;
     }
 
-    protected boolean hasMasterImageLabel(@NonNull Node node)
-    {
+    protected boolean hasMasterImageLabel(@NonNull Node node) {
         return node.getAssignedLabels().contains(LabelAtom.get(PoolImageLabel.MASTER.getLabelName()));
     }
 
-    private boolean isRestrictedNode(Node node)
-    {
+    private boolean isRestrictedNode(Node node) {
         return nodeNames.isMasterNode(node) || hasMasterImageLabel(node);
     }
 }

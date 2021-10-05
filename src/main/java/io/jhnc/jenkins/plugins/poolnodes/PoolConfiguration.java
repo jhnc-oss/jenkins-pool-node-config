@@ -43,150 +43,123 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class PoolConfiguration extends GlobalConfiguration
-{
+public class PoolConfiguration extends GlobalConfiguration {
     @Extension
-    public static class DescriptorImpl extends Descriptor<GlobalConfiguration>
-    {
+    public static class DescriptorImpl extends Descriptor<GlobalConfiguration> {
         private Set<LabelAtom> poolLabelAtoms;
         private Set<String> masterImages;
         private Set<String> testImages;
 
-        public DescriptorImpl()
-        {
+        public DescriptorImpl() {
             load();
         }
 
         @NonNull
         @Override
-        public String getDisplayName()
-        {
+        public String getDisplayName() {
             return Messages.PoolConfiguration_displayName();
         }
 
         @Override
-        public boolean configure(StaplerRequest req, JSONObject json) throws FormException
-        {
-            if (json.has("poolLabels"))
-            {
+        public boolean configure(StaplerRequest req, JSONObject json) throws FormException {
+            if (json.has("poolLabels")) {
                 setPoolLabels(json.getString("poolLabels"));
             }
-            if (json.has("masterImages"))
-            {
+            if (json.has("masterImages")) {
                 setMasterImages(json.getString("masterImages"));
             }
-            if (json.has("testImages"))
-            {
+            if (json.has("testImages")) {
                 setTestImages(json.getString("testImages"));
             }
             return super.configure(req, json);
         }
 
-        public FormValidation doCheckPoolLabels(@QueryParameter String poolLabels)
-        {
-            if (poolLabels == null)
-            {
+        public FormValidation doCheckPoolLabels(@QueryParameter String poolLabels) {
+            if (poolLabels == null) {
                 return FormValidation.error(Messages.PoolConfiguration_validationError("Label"));
             }
             return FormValidation.ok();
         }
 
-        public FormValidation doCheckMasterImages(@QueryParameter String masterImages)
-        {
-            if (masterImages == null)
-            {
+        public FormValidation doCheckMasterImages(@QueryParameter String masterImages) {
+            if (masterImages == null) {
                 return FormValidation.error(Messages.PoolConfiguration_validationError("Master Images"));
             }
             return FormValidation.ok();
         }
 
-        public FormValidation doCheckTestImages(@QueryParameter String testImages)
-        {
-            if (testImages == null)
-            {
+        public FormValidation doCheckTestImages(@QueryParameter String testImages) {
+            if (testImages == null) {
                 return FormValidation.error(Messages.PoolConfiguration_validationError("Test Images"));
             }
             return FormValidation.ok();
         }
 
         @NonNull
-        public String getPoolLabels()
-        {
+        public String getPoolLabels() {
             return this.<Set<LabelAtom>>ensureNotNull(poolLabelAtoms, Collections.emptySet()).stream()
                     .map(LabelAtom::getExpression)
                     .collect(Collectors.joining(" "));
         }
 
         @NonNull
-        public Set<LabelAtom> getPoolLabelAtoms()
-        {
+        public Set<LabelAtom> getPoolLabelAtoms() {
             return ensureNotNull(poolLabelAtoms, Collections.emptySet());
         }
 
-        public void setPoolLabels(@Nullable String labelString)
-        {
+        public void setPoolLabels(@Nullable String labelString) {
             this.poolLabelAtoms = parseLabels(ensureNotNull(labelString, "").trim());
             save();
         }
 
         @NonNull
-        public String getMasterImages()
-        {
+        public String getMasterImages() {
             return collectionToString(masterImages);
         }
 
         @NonNull
-        public Collection<String> getMasterImageNames()
-        {
+        public Collection<String> getMasterImageNames() {
             return ensureNotNull(masterImages, Collections.emptySet());
         }
 
-        public void setMasterImages(@Nullable String masterImagesString)
-        {
+        public void setMasterImages(@Nullable String masterImagesString) {
             this.masterImages = parseElements(masterImagesString);
             save();
         }
 
         @NonNull
-        public String getTestImages()
-        {
+        public String getTestImages() {
             return collectionToString(testImages);
         }
 
         @NonNull
-        public Collection<String> getTestImageNames()
-        {
+        public Collection<String> getTestImageNames() {
             return ensureNotNull(testImages, Collections.emptySet());
         }
 
-        public void setTestImages(@Nullable String testImagesString)
-        {
+        public void setTestImages(@Nullable String testImagesString) {
             this.testImages = parseElements(testImagesString);
             save();
         }
 
-        protected Set<LabelAtom> parseLabels(@NonNull String labelString)
-        {
+        protected Set<LabelAtom> parseLabels(@NonNull String labelString) {
             return Label.parse(labelString);
         }
 
         @NonNull
-        private <T> T ensureNotNull(@Nullable T value, @NonNull T fallbackValue)
-        {
+        private <T> T ensureNotNull(@Nullable T value, @NonNull T fallbackValue) {
             return value == null ? fallbackValue : value;
         }
 
         @NonNull
-        private Set<String> parseElements(@Nullable String str)
-        {
+        private Set<String> parseElements(@Nullable String str) {
             final Set<String> elements = new HashSet<>(Arrays.asList(ensureNotNull(str, "").split(" ")));
             elements.removeIf(item -> ensureNotNull(item, "").trim().isEmpty());
             return elements;
         }
 
         @NonNull
-        private String collectionToString(@Nullable Collection<String> c)
-        {
+        private String collectionToString(@Nullable Collection<String> c) {
             return c == null ? "" : String.join(" ", c).trim();
         }
     }

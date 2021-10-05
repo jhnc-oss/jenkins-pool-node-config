@@ -38,33 +38,28 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-class PoolImageBlockingDispatcherTest
-{
+class PoolImageBlockingDispatcherTest {
     private static final Queue.BuildableItem item = new Queue.BuildableItem(mock(Queue.NotWaitingItem.class));
 
 
     @Test
-    void dispatcherAcceptsItemIfNonRestrictedNode()
-    {
+    void dispatcherAcceptsItemIfNonRestrictedNode() {
         final PoolImageBlockingDispatcher dispatcher = create();
         doReturn(false).when(dispatcher).hasMasterImageLabel(any());
         assertThat(dispatcher.canTake(TestHelper.create("agent-0"), item)).isNull();
     }
 
     @Test
-    void dispatcherBlocksItemIfRestrictedNode()
-    {
+    void dispatcherBlocksItemIfRestrictedNode() {
         final PoolImageBlockingDispatcher dispatcher = create();
         doReturn(false).when(dispatcher).hasMasterImageLabel(any());
         assertThat(dispatcher.canTake(TestHelper.create("master.pool0"), item)).isNotNull();
     }
 
     @Test
-    void dispatcherBlocksItemIfRestrictedLabel()
-    {
+    void dispatcherBlocksItemIfRestrictedLabel() {
         final PoolImageBlockingDispatcher dispatcher = create();
         doReturn(true).when(dispatcher).hasMasterImageLabel(any());
         final Node node = TestHelper.create("node-0");
@@ -74,24 +69,21 @@ class PoolImageBlockingDispatcherTest
     }
 
     @Test
-    void dispatcherBlocksItemIfAtLeastOneRestrictedNode()
-    {
+    void dispatcherBlocksItemIfAtLeastOneRestrictedNode() {
         final PoolImageBlockingDispatcher dispatcher = create();
         doReturn(false).when(dispatcher).hasMasterImageLabel(any());
         assertThat(dispatcher.canTake(TestHelper.create("master.pool0"), item)).isNotNull();
     }
 
     @Test
-    void dispatcherBlocksItemIfRestrictedNodeWithUniqueId()
-    {
+    void dispatcherBlocksItemIfRestrictedNodeWithUniqueId() {
         final PoolImageBlockingDispatcher dispatcher = create();
         doReturn(false).when(dispatcher).hasMasterImageLabel(any());
         assertThat(dispatcher.canTake(TestHelper.create("master.pool1-1fa97cd8"), item)).isNotNull();
     }
 
     @Test
-    void dispatcherBlockMessageContainsShortMessageWithNodeName()
-    {
+    void dispatcherBlockMessageContainsShortMessageWithNodeName() {
         final PoolImageBlockingDispatcher dispatcher = create();
         doReturn(false).when(dispatcher).hasMasterImageLabel(any());
         final CauseOfBlockage cause = dispatcher.canTake(TestHelper.create("master.pool0"), item);
@@ -99,8 +91,7 @@ class PoolImageBlockingDispatcherTest
     }
 
     @Test
-    void dispatcherIgnoresCases()
-    {
+    void dispatcherIgnoresCases() {
         final PoolImageBlockingDispatcher dispatcher = create();
         doReturn(false).when(dispatcher).hasMasterImageLabel(any());
         assertThat(dispatcher.canTake(TestHelper.create("master.pool0"), item)).isNotNull();
@@ -108,8 +99,7 @@ class PoolImageBlockingDispatcherTest
         assertThat(dispatcher.canTake(TestHelper.create("mAsTER.pOoL1"), item)).isNotNull();
     }
 
-    private PoolImageBlockingDispatcher create()
-    {
+    private PoolImageBlockingDispatcher create() {
         return Mockito.spy(new PoolImageBlockingDispatcher(new TestHelper.TestNodeNames()));
     }
 }

@@ -37,21 +37,17 @@ import java.util.stream.Collectors;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-final class TestHelper
-{
-    private TestHelper()
-    {
+final class TestHelper {
+    private TestHelper() {
     }
 
-    public static Node create(String name)
-    {
+    public static Node create(String name) {
         final Node node = mock(Node.class);
         when(node.getNodeName()).thenReturn(name);
         return node;
     }
 
-    public static Node create(String name, Collection<String> label)
-    {
+    public static Node create(String name, Collection<String> label) {
         final Node node = create(name);
         final Set<LabelAtom> labelAtoms = label.stream().map(LabelAtom::new).collect(Collectors.toSet());
         when(node.getAssignedLabels()).thenReturn(labelAtoms);
@@ -59,20 +55,17 @@ final class TestHelper
         return node;
     }
 
-    public static Set<LabelAtom> simpleParseLabel(String labelString)
-    {
+    public static Set<LabelAtom> simpleParseLabel(String labelString) {
         return Arrays.stream(Util.fixNull(labelString).split(" "))
                 .filter(s -> !s.isEmpty())
                 .map(LabelAtom::new)
                 .collect(Collectors.toSet());
     }
 
-    public static class TestNodeNames extends NodeNames
-    {
+    public static class TestNodeNames extends NodeNames {
         private final PoolConfiguration.DescriptorImpl descriptor;
 
-        public TestNodeNames()
-        {
+        public TestNodeNames() {
             super(TestHelper::simpleParseLabel);
             this.descriptor = mock(PoolConfiguration.DescriptorImpl.class);
             when(descriptor.getMasterImageNames()).thenReturn(Arrays.asList("host.is-master", "master.pool0", "master.pool1", "nOdE37990"));
@@ -81,8 +74,7 @@ final class TestHelper
 
         @Nullable
         @Override
-        protected PoolConfiguration.DescriptorImpl getDescriptor()
-        {
+        protected PoolConfiguration.DescriptorImpl getDescriptor() {
             return descriptor;
         }
     }

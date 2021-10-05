@@ -32,29 +32,24 @@ import java.util.Collections;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 
-class NodeNamesTest
-{
+class NodeNamesTest {
     @Test
-    void masterNodes()
-    {
+    void masterNodes() {
         final NodeNames nodeNames = new TestHelper.TestNodeNames();
         assertThat(nodeNames.isMasterNode(TestHelper.create("host.is-master"))).isTrue();
         assertThat(nodeNames.isMasterNode(TestHelper.create("master.pool0"))).isTrue();
     }
 
     @Test
-    void testNodes()
-    {
+    void testNodes() {
         final NodeNames nodeNames = new TestHelper.TestNodeNames();
         assertThat(nodeNames.isTestNode(TestHelper.create("host.is-test"))).isTrue();
         assertThat(nodeNames.isTestNode(TestHelper.create("test.pool0"))).isTrue();
     }
 
     @Test
-    void masterNodeNodeAcceptsExactMatch()
-    {
+    void masterNodeNodeAcceptsExactMatch() {
         final NodeNames nodeNames = new TestHelper.TestNodeNames();
         assertThat(nodeNames.isMasterNode(TestHelper.create("host.isnt-master"))).isFalse();
         assertThat(nodeNames.isMasterNode(TestHelper.create("host-is-master"))).isFalse();
@@ -62,8 +57,7 @@ class NodeNamesTest
     }
 
     @Test
-    void masterNodeNodeAcceptsStartOfNameOnly()
-    {
+    void masterNodeNodeAcceptsStartOfNameOnly() {
         final NodeNames nodeNames = new TestHelper.TestNodeNames();
         assertThat(nodeNames.isMasterNode(TestHelper.create("host.is-master.ignore.this.sub-string"))).isTrue();
         assertThat(nodeNames.isMasterNode(TestHelper.create("NodE37990.oF.PooL.n900"))).isTrue();
@@ -73,31 +67,27 @@ class NodeNamesTest
     }
 
     @Test
-    void masterNodeNodeIsCaseInsensitive()
-    {
+    void masterNodeNodeIsCaseInsensitive() {
         final NodeNames nodeNames = new TestHelper.TestNodeNames();
         assertThat(nodeNames.isMasterNode(TestHelper.create("hOSt.IS-mAstER"))).isTrue();
     }
 
     @Test
-    void masterNodeNodeIsSafeToNullOrEmpty()
-    {
+    void masterNodeNodeIsSafeToNullOrEmpty() {
         final NodeNames nodeNames = new TestHelper.TestNodeNames();
         assertThat(nodeNames.isMasterNode(TestHelper.create(""))).isFalse();
         assertThat(nodeNames.isMasterNode(null)).isFalse();
     }
 
     @Test
-    void testNodeAcceptsExactMatch()
-    {
+    void testNodeAcceptsExactMatch() {
         final NodeNames nodeNames = new TestHelper.TestNodeNames();
         assertThat(nodeNames.isTestNode(TestHelper.create("host.isnt-test"))).isFalse();
         assertThat(nodeNames.isTestNode(TestHelper.create("host.is-test"))).isTrue();
     }
 
     @Test
-    void testNodeAcceptsStartOfNameOnly()
-    {
+    void testNodeAcceptsStartOfNameOnly() {
         final NodeNames nodeNames = new TestHelper.TestNodeNames();
         assertThat(nodeNames.isTestNode(TestHelper.create("host.is-test.ignore.this.sub-string"))).isTrue();
         assertThat(nodeNames.isTestNode(TestHelper.create("node51843.NodE.PO.OL34"))).isTrue();
@@ -107,23 +97,20 @@ class NodeNamesTest
     }
 
     @Test
-    void testNodeMasterIsCaseInsensitive()
-    {
+    void testNodeMasterIsCaseInsensitive() {
         final NodeNames nodeNames = new TestHelper.TestNodeNames();
         assertThat(nodeNames.isTestNode(TestHelper.create("HosT.iS-TEst"))).isTrue();
     }
 
     @Test
-    void testNodeIsSafeToNullOrEmpty()
-    {
+    void testNodeIsSafeToNullOrEmpty() {
         final NodeNames nodeNames = new TestHelper.TestNodeNames();
         assertThat(nodeNames.isTestNode(TestHelper.create(""))).isFalse();
         assertThat(nodeNames.isTestNode(null)).isFalse();
     }
 
     @Test
-    void safeToNullDescriptor()
-    {
+    void safeToNullDescriptor() {
         final NodeNames nodeNames = Mockito.spy(NodeNames.class);
         doReturn(null).when(nodeNames).getDescriptor();
 
@@ -132,8 +119,7 @@ class NodeNamesTest
     }
 
     @Test
-    void prodNodeAcceptsLabelMatch()
-    {
+    void prodNodeAcceptsLabelMatch() {
         final NodeNames nodeNames = new TestHelper.TestNodeNames();
         assertThat(nodeNames.isProdNode(TestHelper.create("node", Collections.singletonList("vdi-pool")))).isTrue();
         assertThat(nodeNames.isProdNode(TestHelper.create("node", Collections.singletonList("vdi-pool-prod")))).isTrue();
@@ -156,23 +142,20 @@ class NodeNamesTest
     }
 
     @Test
-    void prodNodeLabelIsCaseInsensitive()
-    {
+    void prodNodeLabelIsCaseInsensitive() {
         final NodeNames nodeNames = new TestHelper.TestNodeNames();
         assertThat(nodeNames.isProdNode(TestHelper.create("node-0", Collections.singletonList("vDI-pOOl")))).isTrue();
     }
 
     @Test
-    void prodNodeIsSafeToNullOrEmpty()
-    {
+    void prodNodeIsSafeToNullOrEmpty() {
         final NodeNames nodeNames = new TestHelper.TestNodeNames();
         assertThat(nodeNames.isProdNode(TestHelper.create("node-0", Collections.emptyList()))).isFalse();
         assertThat(nodeNames.isProdNode(null)).isFalse();
     }
 
     @Test
-    void prodNodeIsExcludedByOtherTypes()
-    {
+    void prodNodeIsExcludedByOtherTypes() {
         final NodeNames nodeNames = new TestHelper.TestNodeNames();
         assertThat(nodeNames.isProdNode(TestHelper.create("node", Collections.singletonList("vdi-pool")))).isTrue();
         assertThat(nodeNames.isProdNode(TestHelper.create("host.is-master", Collections.singletonList("vdi-pool")))).isFalse();

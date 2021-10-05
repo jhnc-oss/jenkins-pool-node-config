@@ -37,13 +37,10 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 
-class PoolLabelFinderTest
-{
+class PoolLabelFinderTest {
     @Test
-    void returnsEmptyOnUnrelatedNode()
-    {
+    void returnsEmptyOnUnrelatedNode() {
         final Node node0 = TestHelper.create("unrelated-node-0");
         final Node node1 = TestHelper.create("unrelated-node-1", Collections.singletonList("vdi-image-abc"));
         final PoolLabelFinder labelFinder = create();
@@ -52,24 +49,21 @@ class PoolLabelFinderTest
     }
 
     @Test
-    void returnsLabelsOnMasterNode()
-    {
+    void returnsLabelsOnMasterNode() {
         final Node node = TestHelper.create("master.pool1");
         final PoolLabelFinder labelFinder = create();
         assertThat(labelFinder.findLabels(node)).containsExactly(new LabelAtom("vdi-image-master"));
     }
 
     @Test
-    void returnsLabelsOnTestNode()
-    {
+    void returnsLabelsOnTestNode() {
         final Node node = TestHelper.create("test.pool0");
         final PoolLabelFinder labelFinder = create();
         assertThat(labelFinder.findLabels(node)).containsExactly(new LabelAtom("vdi-image-test"));
     }
 
     @Test
-    void returnsLabelsOnProdNode()
-    {
+    void returnsLabelsOnProdNode() {
         final Node node = TestHelper.create("node-0", Collections.singletonList("vdi-pool-test"));
         final PoolLabelFinder labelFinder = create();
         doReturn(Collections.emptySet()).when(labelFinder).getConfiguredLabel();
@@ -77,8 +71,7 @@ class PoolLabelFinderTest
     }
 
     @Test
-    void returnsConfiguredLabelsOnProdNode()
-    {
+    void returnsConfiguredLabelsOnProdNode() {
         final Node node = TestHelper.create("node-0", Collections.singletonList("vdi-pool-test"));
         final PoolLabelFinder labelFinder = create();
         doReturn(new HashSet<>(Arrays.asList(new LabelAtom("label-0"), new LabelAtom("label-1"))))
@@ -87,8 +80,7 @@ class PoolLabelFinderTest
                 new LabelAtom("label-0"), new LabelAtom("label-1"));
     }
 
-    private PoolLabelFinder create()
-    {
+    private PoolLabelFinder create() {
         final PoolLabelFinder labelFinder = Mockito.spy(new PoolLabelFinder(new TestHelper.TestNodeNames()));
         doAnswer(invocation -> Collections.singleton(new LabelAtom(invocation.getArgument(0, PoolImageLabel.class).getLabelName())))
                 .when(labelFinder).assignedLabels(any(PoolImageLabel.class));

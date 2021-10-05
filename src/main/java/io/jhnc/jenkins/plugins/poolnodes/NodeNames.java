@@ -36,38 +36,31 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.function.Function;
 
-public class NodeNames
-{
+public class NodeNames {
     private static final Locale COMPARE_LOCALE = Locale.ENGLISH;
     private static final String POOL_NODE_LABEL_PREFIX = "vdi-pool";
     private final Function<String, Set<LabelAtom>> labelParser;
 
-    public NodeNames()
-    {
+    public NodeNames() {
         this(Label::parse);
     }
 
-    protected NodeNames(@NonNull Function<String, Set<LabelAtom>> labelParser)
-    {
+    protected NodeNames(@NonNull Function<String, Set<LabelAtom>> labelParser) {
         this.labelParser = labelParser;
     }
 
-    public boolean isMasterNode(@Nullable Node node)
-    {
+    public boolean isMasterNode(@Nullable Node node) {
         final PoolConfiguration.DescriptorImpl descriptor = getDescriptor();
         return descriptor != null && isIn(descriptor.getMasterImageNames(), node);
     }
 
-    public boolean isTestNode(@Nullable Node node)
-    {
+    public boolean isTestNode(@Nullable Node node) {
         final PoolConfiguration.DescriptorImpl descriptor = getDescriptor();
         return descriptor != null && isIn(getDescriptor().getTestImageNames(), node);
     }
 
-    public boolean isProdNode(@Nullable Node node)
-    {
-        if (node == null || isTestNode(node) || isMasterNode(node))
-        {
+    public boolean isProdNode(@Nullable Node node) {
+        if (node == null || isTestNode(node) || isMasterNode(node)) {
             return false;
         }
 
@@ -78,15 +71,12 @@ public class NodeNames
     }
 
     @Nullable
-    protected PoolConfiguration.DescriptorImpl getDescriptor()
-    {
+    protected PoolConfiguration.DescriptorImpl getDescriptor() {
         return (PoolConfiguration.DescriptorImpl) Jenkins.get().getDescriptor(PoolConfiguration.class);
     }
 
-    private boolean isIn(@NonNull Collection<String> labels, @Nullable Node node)
-    {
-        if (node == null)
-        {
+    private boolean isIn(@NonNull Collection<String> labels, @Nullable Node node) {
+        if (node == null) {
             return false;
         }
 
@@ -95,8 +85,7 @@ public class NodeNames
                 && labels.stream().anyMatch(name -> startsWithIgnoreCase(nodeName, name));
     }
 
-    private boolean startsWithIgnoreCase(@NonNull String str, @NonNull String prefix)
-    {
+    private boolean startsWithIgnoreCase(@NonNull String str, @NonNull String prefix) {
         return str.toLowerCase(COMPARE_LOCALE).startsWith(prefix.toLowerCase(COMPARE_LOCALE));
     }
 }

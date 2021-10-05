@@ -37,46 +37,37 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Extension
-public class PoolLabelFinder extends LabelFinder
-{
+public class PoolLabelFinder extends LabelFinder {
     private final NodeNames nodeNames;
 
-    public PoolLabelFinder()
-    {
+    public PoolLabelFinder() {
         this(new NodeNames());
     }
 
-    protected PoolLabelFinder(NodeNames nodeNames)
-    {
+    protected PoolLabelFinder(NodeNames nodeNames) {
         this.nodeNames = nodeNames;
     }
 
     @Override
-    public Collection<LabelAtom> findLabels(@NonNull Node node)
-    {
-        if (nodeNames.isMasterNode(node))
-        {
+    public Collection<LabelAtom> findLabels(@NonNull Node node) {
+        if (nodeNames.isMasterNode(node)) {
             return assignedLabels(PoolImageLabel.MASTER);
         }
-        if (nodeNames.isTestNode(node))
-        {
+        if (nodeNames.isTestNode(node)) {
             return assignedLabels(PoolImageLabel.TEST);
         }
-        if (nodeNames.isProdNode(node))
-        {
+        if (nodeNames.isProdNode(node)) {
             return Stream.concat(assignedLabels(PoolImageLabel.PRODUCTION).stream(),
                     getConfiguredLabel().stream()).collect(Collectors.toSet());
         }
         return Collections.emptySet();
     }
 
-    protected Collection<LabelAtom> assignedLabels(PoolImageLabel image)
-    {
+    protected Collection<LabelAtom> assignedLabels(PoolImageLabel image) {
         return LabelAtom.parse(image.getLabelName());
     }
 
-    protected Collection<LabelAtom> getConfiguredLabel()
-    {
+    protected Collection<LabelAtom> getConfiguredLabel() {
         final PoolConfiguration.DescriptorImpl descriptor = (PoolConfiguration.DescriptorImpl) Jenkins
                 .get().getDescriptor(PoolConfiguration.class);
         return descriptor == null ? null : descriptor.getPoolLabelAtoms();

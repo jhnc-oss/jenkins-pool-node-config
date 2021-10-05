@@ -40,26 +40,22 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
-class PoolConfigurationTest
-{
+class PoolConfigurationTest {
     @Test
-    void displayNameIsSet()
-    {
+    void displayNameIsSet() {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         assertThat(descriptor.getDisplayName()).isNotEmpty();
     }
 
     @Test
-    void labelEmptyOnDefault()
-    {
+    void labelEmptyOnDefault() {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         assertThat(descriptor.getPoolLabels()).isEmpty();
         assertThat(descriptor.getPoolLabelAtoms()).isEmpty();
     }
 
     @Test
-    void labelIsSafeToNullOrEmpty()
-    {
+    void labelIsSafeToNullOrEmpty() {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         descriptor.setPoolLabels(null);
         assertThat(descriptor.getPoolLabels()).isEmpty();
@@ -75,16 +71,14 @@ class PoolConfigurationTest
     }
 
     @Test
-    void setLabelTrimsString()
-    {
+    void setLabelTrimsString() {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         descriptor.setPoolLabels(" aa bb    cc  ");
         assertThat(descriptor.getPoolLabels()).isEqualTo("aa bb cc");
     }
 
     @Test
-    void setLabelSetsLabel()
-    {
+    void setLabelSetsLabel() {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         descriptor.setPoolLabels("abc");
         assertThat(descriptor.getPoolLabels()).isEqualTo("abc");
@@ -92,8 +86,7 @@ class PoolConfigurationTest
     }
 
     @Test
-    void setLabelSavesUpdate()
-    {
+    void setLabelSavesUpdate() {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         descriptor.setPoolLabels("xyz");
         assertThat(descriptor.getPoolLabels()).isEqualTo("xyz");
@@ -102,8 +95,7 @@ class PoolConfigurationTest
     }
 
     @Test
-    void getLabelAtoms()
-    {
+    void getLabelAtoms() {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         descriptor.setPoolLabels("abc def ghi");
         assertThat(descriptor.getPoolLabelAtoms()).containsExactly(new LabelAtom("abc"),
@@ -111,8 +103,7 @@ class PoolConfigurationTest
     }
 
     @Test
-    void configureSetsLabels() throws Descriptor.FormException
-    {
+    void configureSetsLabels() throws Descriptor.FormException {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         final StaplerRequest req = mock(StaplerRequest.class);
         final JSONObject json = new JSONObject().element("poolLabels", "label-1 label-2 label-3");
@@ -125,38 +116,33 @@ class PoolConfigurationTest
     }
 
     @Test
-    void labelFormValidationAcceptsLabel()
-    {
+    void labelFormValidationAcceptsLabel() {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         assertThat(descriptor.doCheckPoolLabels("label-0").kind).isEqualTo(FormValidation.Kind.OK);
     }
 
     @Test
-    void labelFormValidationAcceptsEmpty()
-    {
+    void labelFormValidationAcceptsEmpty() {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         assertThat(descriptor.doCheckPoolLabels("").kind).isEqualTo(FormValidation.Kind.OK);
         assertThat(descriptor.doCheckPoolLabels(" ").kind).isEqualTo(FormValidation.Kind.OK);
     }
 
     @Test
-    void labelFormValidationRejectsNull()
-    {
+    void labelFormValidationRejectsNull() {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         assertThat(descriptor.doCheckPoolLabels(null).kind).isEqualTo(FormValidation.Kind.ERROR);
     }
 
     @Test
-    void masterImagesEmptyOnDefault()
-    {
+    void masterImagesEmptyOnDefault() {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         assertThat(descriptor.getMasterImages()).isEmpty();
         assertThat(descriptor.getMasterImageNames()).isEmpty();
     }
 
     @Test
-    void masterImagesIsSafeToNullOrEmpty()
-    {
+    void masterImagesIsSafeToNullOrEmpty() {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         descriptor.setMasterImages(null);
         assertThat(descriptor.getMasterImages()).isEmpty();
@@ -171,8 +157,7 @@ class PoolConfigurationTest
     }
 
     @Test
-    void setMasterImagesTrimsString()
-    {
+    void setMasterImagesTrimsString() {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         descriptor.setMasterImages(" host-1 host-2    host-3  ");
         assertThat(descriptor.getMasterImages().split(" "))
@@ -181,8 +166,7 @@ class PoolConfigurationTest
     }
 
     @Test
-    void setMasterImagesSetsLabel()
-    {
+    void setMasterImagesSetsLabel() {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         descriptor.setMasterImages("wxyz");
         assertThat(descriptor.getMasterImages()).isEqualTo("wxyz");
@@ -190,8 +174,7 @@ class PoolConfigurationTest
     }
 
     @Test
-    void setMasterImagesSavesUpdate()
-    {
+    void setMasterImagesSavesUpdate() {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         descriptor.setMasterImages("abc");
         assertThat(descriptor.getMasterImages()).isEqualTo("abc");
@@ -200,8 +183,7 @@ class PoolConfigurationTest
     }
 
     @Test
-    void configureSetsMasterImages() throws Descriptor.FormException
-    {
+    void configureSetsMasterImages() throws Descriptor.FormException {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         final StaplerRequest req = mock(StaplerRequest.class);
         final JSONObject json = new JSONObject().element("masterImages", "host-a host-b host-c");
@@ -213,38 +195,33 @@ class PoolConfigurationTest
     }
 
     @Test
-    void masterImageFormValidationAcceptsImageName()
-    {
+    void masterImageFormValidationAcceptsImageName() {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         assertThat(descriptor.doCheckMasterImages("host-0").kind).isEqualTo(FormValidation.Kind.OK);
     }
 
     @Test
-    void masterImagesFormValidationAcceptsEmpty()
-    {
+    void masterImagesFormValidationAcceptsEmpty() {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         assertThat(descriptor.doCheckMasterImages("").kind).isEqualTo(FormValidation.Kind.OK);
         assertThat(descriptor.doCheckMasterImages(" ").kind).isEqualTo(FormValidation.Kind.OK);
     }
 
     @Test
-    void masterImageFormValidationRejectsNull()
-    {
+    void masterImageFormValidationRejectsNull() {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         assertThat(descriptor.doCheckMasterImages(null).kind).isEqualTo(FormValidation.Kind.ERROR);
     }
 
     @Test
-    void testImagesEmptyOnDefault()
-    {
+    void testImagesEmptyOnDefault() {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         assertThat(descriptor.getTestImages()).isEmpty();
         assertThat(descriptor.getTestImageNames()).isEmpty();
     }
 
     @Test
-    void testImagesIsSafeToNullOrEmpty()
-    {
+    void testImagesIsSafeToNullOrEmpty() {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         descriptor.setTestImages(null);
         assertThat(descriptor.getTestImages()).isEmpty();
@@ -260,8 +237,7 @@ class PoolConfigurationTest
     }
 
     @Test
-    void setTestImagesTrimsString()
-    {
+    void setTestImagesTrimsString() {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         descriptor.setTestImages(" host-t1 host-t2   host-t3  ");
         assertThat(descriptor.getTestImages().split(" "))
@@ -270,8 +246,7 @@ class PoolConfigurationTest
     }
 
     @Test
-    void setTestImagesSetsLabel()
-    {
+    void setTestImagesSetsLabel() {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         descriptor.setTestImages("xxyyzz");
         assertThat(descriptor.getTestImages()).isEqualTo("xxyyzz");
@@ -279,8 +254,7 @@ class PoolConfigurationTest
     }
 
     @Test
-    void setTestImagesSavesUpdate()
-    {
+    void setTestImagesSavesUpdate() {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         descriptor.setTestImages("aabbcc");
         assertThat(descriptor.getTestImages()).isEqualTo("aabbcc");
@@ -289,8 +263,7 @@ class PoolConfigurationTest
     }
 
     @Test
-    void configureSetsTestImages() throws Descriptor.FormException
-    {
+    void configureSetsTestImages() throws Descriptor.FormException {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         final StaplerRequest req = mock(StaplerRequest.class);
         final JSONObject json = new JSONObject().element("testImages", "host.a host.b host.c");
@@ -302,29 +275,25 @@ class PoolConfigurationTest
     }
 
     @Test
-    void testImageFormValidationAcceptsImageName()
-    {
+    void testImageFormValidationAcceptsImageName() {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         assertThat(descriptor.doCheckTestImages("host-x").kind).isEqualTo(FormValidation.Kind.OK);
     }
 
     @Test
-    void testImagesFormValidationAcceptsEmpty()
-    {
+    void testImagesFormValidationAcceptsEmpty() {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         assertThat(descriptor.doCheckTestImages("").kind).isEqualTo(FormValidation.Kind.OK);
         assertThat(descriptor.doCheckTestImages(" ").kind).isEqualTo(FormValidation.Kind.OK);
     }
 
     @Test
-    void testImageFormValidationRejectsNull()
-    {
+    void testImageFormValidationRejectsNull() {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         assertThat(descriptor.doCheckTestImages(null).kind).isEqualTo(FormValidation.Kind.ERROR);
     }
 
-    private PoolConfiguration.DescriptorImpl create()
-    {
+    private PoolConfiguration.DescriptorImpl create() {
         final PoolConfiguration.DescriptorImpl descriptor = mock(PoolConfiguration.DescriptorImpl.class,
                 withSettings().defaultAnswer(CALLS_REAL_METHODS));
         doAnswer(invocation -> TestHelper.simpleParseLabel(invocation.getArgument(0, String.class)))
