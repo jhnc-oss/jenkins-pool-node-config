@@ -24,8 +24,8 @@
 
 package io.jhnc.jenkins.plugins.poolnodes;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import hudson.model.Label;
 import hudson.model.Node;
 import hudson.model.labels.LabelAtom;
@@ -49,17 +49,17 @@ public class NodeNames {
         this.labelParser = labelParser;
     }
 
-    public boolean isMasterNode(@Nullable Node node) {
+    public boolean isMasterNode(@CheckForNull Node node) {
         final PoolConfiguration.DescriptorImpl descriptor = getDescriptor();
         return descriptor != null && isIn(descriptor.getMasterImageNames(), node);
     }
 
-    public boolean isTestNode(@Nullable Node node) {
+    public boolean isTestNode(@CheckForNull Node node) {
         final PoolConfiguration.DescriptorImpl descriptor = getDescriptor();
-        return descriptor != null && isIn(getDescriptor().getTestImageNames(), node);
+        return descriptor != null && isIn(descriptor.getTestImageNames(), node);
     }
 
-    public boolean isProdNode(@Nullable Node node) {
+    public boolean isProdNode(@CheckForNull Node node) {
         if (node == null || isTestNode(node) || isMasterNode(node)) {
             return false;
         }
@@ -70,12 +70,12 @@ public class NodeNames {
         });
     }
 
-    @Nullable
+    @CheckForNull
     protected PoolConfiguration.DescriptorImpl getDescriptor() {
         return (PoolConfiguration.DescriptorImpl) Jenkins.get().getDescriptor(PoolConfiguration.class);
     }
 
-    private boolean isIn(@NonNull Collection<String> labels, @Nullable Node node) {
+    private boolean isIn(@NonNull Collection<String> labels, @CheckForNull Node node) {
         if (node == null) {
             return false;
         }

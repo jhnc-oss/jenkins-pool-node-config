@@ -24,8 +24,8 @@
 
 package io.jhnc.jenkins.plugins.poolnodes;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import hudson.Extension;
 import hudson.model.Descriptor;
 import hudson.model.Label;
@@ -107,7 +107,7 @@ public class PoolConfiguration extends GlobalConfiguration {
             return ensureNotNull(poolLabelAtoms, Collections.emptySet());
         }
 
-        public void setPoolLabels(@Nullable String labelString) {
+        public void setPoolLabels(@CheckForNull String labelString) {
             this.poolLabelAtoms = parseLabels(ensureNotNull(labelString, "").trim());
             save();
         }
@@ -122,7 +122,7 @@ public class PoolConfiguration extends GlobalConfiguration {
             return ensureNotNull(masterImages, Collections.emptySet());
         }
 
-        public void setMasterImages(@Nullable String masterImagesString) {
+        public void setMasterImages(@CheckForNull String masterImagesString) {
             this.masterImages = parseElements(masterImagesString);
             save();
         }
@@ -137,7 +137,7 @@ public class PoolConfiguration extends GlobalConfiguration {
             return ensureNotNull(testImages, Collections.emptySet());
         }
 
-        public void setTestImages(@Nullable String testImagesString) {
+        public void setTestImages(@CheckForNull String testImagesString) {
             this.testImages = parseElements(testImagesString);
             save();
         }
@@ -147,19 +147,19 @@ public class PoolConfiguration extends GlobalConfiguration {
         }
 
         @NonNull
-        private <T> T ensureNotNull(@Nullable T value, @NonNull T fallbackValue) {
+        private <T> T ensureNotNull(@CheckForNull T value, @NonNull T fallbackValue) {
             return value == null ? fallbackValue : value;
         }
 
         @NonNull
-        private Set<String> parseElements(@Nullable String str) {
+        private Set<String> parseElements(@CheckForNull String str) {
             final Set<String> elements = new HashSet<>(Arrays.asList(ensureNotNull(str, "").split(" ")));
             elements.removeIf(item -> ensureNotNull(item, "").trim().isEmpty());
             return elements;
         }
 
         @NonNull
-        private String collectionToString(@Nullable Collection<String> c) {
+        private String collectionToString(@CheckForNull Collection<String> c) {
             return c == null ? "" : String.join(" ", c).trim();
         }
     }

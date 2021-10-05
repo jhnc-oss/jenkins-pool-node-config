@@ -24,7 +24,7 @@
 
 package io.jhnc.jenkins.plugins.poolnodes;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import hudson.Util;
 import hudson.model.Node;
 import hudson.model.labels.LabelAtom;
@@ -72,7 +72,7 @@ final class TestHelper {
             when(descriptor.getTestImageNames()).thenReturn(Arrays.asList("host.is-test", "test.pool0", "test.pool1", "NoDe51843"));
         }
 
-        @Nullable
+        @CheckForNull
         @Override
         protected PoolConfiguration.DescriptorImpl getDescriptor() {
             return descriptor;
