@@ -26,18 +26,18 @@ SOFTWARE.
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
          xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 
-    <f:section title="Pool Agents">
-        <f:entry title="Labels" field="poolLabels">
+    <f:section title="${%config.title}">
+        <f:entry title="${%config.labels}" field="poolLabels">
             <f:textbox value="${descriptor.poolLabels}"
                        checkUrl="'descriptorByName/PoolConfiguration/checkPoolLabels?poolLabels='+escape(this.value)"/>
         </f:entry>
 
-        <f:entry title="Master Images" field="masterImages">
+        <f:entry title="${%config.masterimages}" field="masterImages">
             <f:textbox value="${descriptor.masterImages}"
                        checkUrl="'descriptorByName/PoolConfiguration/checkMasterImages?masterImages='+escape(this.value)"/>
         </f:entry>
 
-        <f:entry title="Test Images" field="testImages">
+        <f:entry title="${%config.testimages}" field="testImages">
             <f:textbox value="${descriptor.testImages}"
                        checkUrl="'descriptorByName/PoolConfiguration/checkTestImages?testImages='+escape(this.value)"/>
         </f:entry>

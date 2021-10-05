@@ -60,7 +60,7 @@ public class PoolImageBlockingDispatcher extends QueueTaskDispatcher
                 @Override
                 public String getShortDescription()
                 {
-                    return node.getNodeName() + " restricted";
+                    return Messages.PoolImageBlockingDispatcher_restricted(node.getNodeName());
                 }
             };
         }

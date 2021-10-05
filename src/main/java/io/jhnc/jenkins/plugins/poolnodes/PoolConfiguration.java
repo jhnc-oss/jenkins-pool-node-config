@@ -61,7 +61,7 @@ public class PoolConfiguration extends GlobalConfiguration
         @Override
         public String getDisplayName()
         {
-            return "Pool Agent Configuration";
+            return Messages.PoolConfiguration_displayName();
         }
 
         @Override
@@ -86,7 +86,7 @@ public class PoolConfiguration extends GlobalConfiguration
         {
             if (poolLabels == null)
             {
-                return FormValidation.error("Label must not be null");
+                return FormValidation.error(Messages.PoolConfiguration_validationError("Label"));
             }
             return FormValidation.ok();
         }
@@ -95,7 +95,7 @@ public class PoolConfiguration extends GlobalConfiguration
         {
             if (masterImages == null)
             {
-                return FormValidation.error("Master Images must not be null");
+                return FormValidation.error(Messages.PoolConfiguration_validationError("Master Images"));
             }
             return FormValidation.ok();
         }
@@ -104,7 +104,7 @@ public class PoolConfiguration extends GlobalConfiguration
         {
             if (testImages == null)
             {
-                return FormValidation.error("Test Images must not be null");
+                return FormValidation.error(Messages.PoolConfiguration_validationError("Test Images"));
             }
             return FormValidation.ok();
         }
