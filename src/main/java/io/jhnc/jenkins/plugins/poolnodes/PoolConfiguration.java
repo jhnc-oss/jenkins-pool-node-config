@@ -75,24 +75,15 @@ public class PoolConfiguration extends GlobalConfiguration {
         }
 
         public FormValidation doCheckPoolLabels(@QueryParameter String poolLabels) {
-            if (poolLabels == null) {
-                return FormValidation.error(Messages.PoolConfiguration_validationError("Label"));
-            }
-            return FormValidation.ok();
+            return validateParameter(poolLabels, "Label");
         }
 
         public FormValidation doCheckMasterImages(@QueryParameter String masterImages) {
-            if (masterImages == null) {
-                return FormValidation.error(Messages.PoolConfiguration_validationError("Master Images"));
-            }
-            return FormValidation.ok();
+            return validateParameter(masterImages, "Master Images");
         }
 
         public FormValidation doCheckTestImages(@QueryParameter String testImages) {
-            if (testImages == null) {
-                return FormValidation.error(Messages.PoolConfiguration_validationError("Test Images"));
-            }
-            return FormValidation.ok();
+            return validateParameter(testImages, "Test Images");
         }
 
         @NonNull
@@ -161,6 +152,14 @@ public class PoolConfiguration extends GlobalConfiguration {
         @NonNull
         private String collectionToString(@CheckForNull Collection<String> c) {
             return c == null ? "" : String.join(" ", c).trim();
+        }
+
+        @NonNull
+        private FormValidation validateParameter(@CheckForNull String value, @NonNull String name) {
+            if (value == null) {
+                return FormValidation.error(Messages.PoolConfiguration_validationError(name));
+            }
+            return FormValidation.ok();
         }
     }
 }
