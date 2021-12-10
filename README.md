@@ -6,3 +6,19 @@
 ![Java](https://img.shields.io/badge/java-1.8-green.svg)
 
 Configuration of pool nodes.
+
+## Image types
+
+- **Master**: Image from which the others are created – *builds are not allowed on this type*
+- **Test**: Image for testing
+- **Prod**: Image used for the actual builds
+
+Each type gets a distinguishable type label, but only *Prod* images get the additional configured labels. 
+
+## Configuration
+
+Configuration is available through *Global Configuration*:
+
+- **Labels**: Labels assigned to *Prod* images (whitespace separated)
+- **Master Images**: Name prefix of *Master* images
+- **Test Images**: Name prefix of *Test* images
