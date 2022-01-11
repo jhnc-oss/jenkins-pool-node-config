@@ -28,9 +28,10 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.junit.jupiter.EnableJenkins;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -44,12 +45,12 @@ import java.util.Collection;
 import static com.google.common.truth.Truth.assertThat;
 
 @Tag("IT")
-@ExtendWith(JenkinsJUnitAdapter.JenkinsParameterResolver.class)
+@EnableJenkins
 class PoolConfigurationIT {
 
     @ParameterizedTest
     @ViewFieldSource
-    void entryCanBeSavedEmpty(String entry, JenkinsJUnitAdapter.JUnitJenkinsRule r) throws Exception {
+    void entryCanBeSavedEmpty(String entry, JenkinsRule r) throws Exception {
         final PoolConfiguration.DescriptorImpl descriptor = getDescriptor(r);
         final HtmlPage page = r.createWebClient().goTo("configure");
 
@@ -65,7 +66,7 @@ class PoolConfigurationIT {
 
     @ParameterizedTest
     @ViewFieldSource
-    void entryValueIsSet(String entry, JenkinsJUnitAdapter.JUnitJenkinsRule r) throws Exception {
+    void entryValueIsSet(String entry, JenkinsRule r) throws Exception {
         final PoolConfiguration.DescriptorImpl descriptor = getDescriptor(r);
         final HtmlPage page = r.createWebClient().goTo("configure");
 
@@ -75,7 +76,7 @@ class PoolConfigurationIT {
 
     @ParameterizedTest
     @ViewFieldSource
-    void entryValueIsUpdated(String entry, JenkinsJUnitAdapter.JUnitJenkinsRule r) throws Exception {
+    void entryValueIsUpdated(String entry, JenkinsRule r) throws Exception {
         final PoolConfiguration.DescriptorImpl descriptor = getDescriptor(r);
         final HtmlPage page = r.createWebClient().goTo("configure");
 
@@ -89,7 +90,7 @@ class PoolConfigurationIT {
 
     @ParameterizedTest
     @ViewFieldSource
-    void entryIsSavedAcrossConfigurations(String entry, JenkinsJUnitAdapter.JUnitJenkinsRule r) throws Exception {
+    void entryIsSavedAcrossConfigurations(String entry, JenkinsRule r) throws Exception {
         final PoolConfiguration.DescriptorImpl descriptor = getDescriptor(r);
         final HtmlPage page = r.createWebClient().goTo("configure");
 
@@ -101,7 +102,7 @@ class PoolConfigurationIT {
         assertThat(entryField2.getValueAttribute()).isEqualTo("value-1 value-2");
     }
 
-    private PoolConfiguration.DescriptorImpl getDescriptor(JenkinsJUnitAdapter.JUnitJenkinsRule r) {
+    private PoolConfiguration.DescriptorImpl getDescriptor(JenkinsRule r) {
         return r.jenkins.getDescriptorByType(PoolConfiguration.DescriptorImpl.class);
     }
 
@@ -115,7 +116,7 @@ class PoolConfigurationIT {
         return Arrays.asList(getValueFromDescriptor(descriptor, entry).split(" "));
     }
 
-    private void submitEntry(JenkinsJUnitAdapter.JUnitJenkinsRule r, HtmlPage page, String entry, String value) throws Exception {
+    private void submitEntry(JenkinsRule r, HtmlPage page, String entry, String value) throws Exception {
         final HtmlTextInput entryElement = page.getElementByName("_." + entry);
         entryElement.setValueAttribute(value);
         r.submit(page.getFormByName("config"));
