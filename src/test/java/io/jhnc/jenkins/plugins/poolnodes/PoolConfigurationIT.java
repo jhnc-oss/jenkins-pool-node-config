@@ -26,12 +26,12 @@ package io.jhnc.jenkins.plugins.poolnodes;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
+import io.jhnc.jenkins.plugins.test.EnableJenkins;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.jvnet.hudson.test.JenkinsRule;
-import org.jvnet.hudson.test.junit.jupiter.EnableJenkins;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
