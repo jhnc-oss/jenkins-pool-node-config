@@ -30,11 +30,14 @@ import hudson.Extension;
 import hudson.model.Descriptor;
 import hudson.model.Label;
 import hudson.model.labels.LabelAtom;
+import hudson.security.Permission;
 import hudson.util.FormValidation;
 import jenkins.model.GlobalConfiguration;
+import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.interceptor.RequirePOST;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -74,15 +77,21 @@ public class PoolConfiguration extends GlobalConfiguration {
             return super.configure(req, json);
         }
 
+        @RequirePOST
         public FormValidation doCheckPoolLabels(@QueryParameter String poolLabels) {
+            checkPermission(Jenkins.ADMINISTER);
             return validateParameter(poolLabels, "Label");
         }
 
+        @RequirePOST
         public FormValidation doCheckMasterImages(@QueryParameter String masterImages) {
+            checkPermission(Jenkins.ADMINISTER);
             return validateParameter(masterImages, "Master Images");
         }
 
+        @RequirePOST
         public FormValidation doCheckTestImages(@QueryParameter String testImages) {
+            checkPermission(Jenkins.ADMINISTER);
             return validateParameter(testImages, "Test Images");
         }
 
@@ -135,6 +144,10 @@ public class PoolConfiguration extends GlobalConfiguration {
 
         protected Set<LabelAtom> parseLabels(@NonNull String labelString) {
             return Label.parse(labelString);
+        }
+
+        public void checkPermission(@NonNull Permission permission) {
+            Jenkins.get().checkPermission(permission);
         }
 
         @NonNull

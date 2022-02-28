@@ -27,6 +27,7 @@ package io.jhnc.jenkins.plugins.poolnodes;
 import hudson.model.Descriptor;
 import hudson.model.labels.LabelAtom;
 import hudson.util.FormValidation;
+import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.kohsuke.stapler.StaplerRequest;
@@ -116,6 +117,13 @@ class PoolConfigurationTest {
     }
 
     @Test
+    void labelFormValidationChecksPermission() {
+        final PoolConfiguration.DescriptorImpl descriptor = create();
+        assertThat(descriptor.doCheckPoolLabels("x").kind).isEqualTo(FormValidation.Kind.OK);
+        verify(descriptor).checkPermission(Jenkins.ADMINISTER);
+    }
+
+    @Test
     void labelFormValidationAcceptsLabel() {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         assertThat(descriptor.doCheckPoolLabels("label-0").kind).isEqualTo(FormValidation.Kind.OK);
@@ -192,6 +200,13 @@ class PoolConfigurationTest {
         assertThat(descriptor.getMasterImages().split(" "))
                 .asList().containsExactly("host-a", "host-b", "host-c");
         assertThat(descriptor.getMasterImageNames()).containsExactly("host-a", "host-b", "host-c");
+    }
+
+    @Test
+    void masterImageFormValidationChecksPermission() {
+        final PoolConfiguration.DescriptorImpl descriptor = create();
+        assertThat(descriptor.doCheckMasterImages("x").kind).isEqualTo(FormValidation.Kind.OK);
+        verify(descriptor).checkPermission(Jenkins.ADMINISTER);
     }
 
     @Test
@@ -275,6 +290,13 @@ class PoolConfigurationTest {
     }
 
     @Test
+    void testImageFormValidationChecksPermission() {
+        final PoolConfiguration.DescriptorImpl descriptor = create();
+        assertThat(descriptor.doCheckTestImages("x").kind).isEqualTo(FormValidation.Kind.OK);
+        verify(descriptor).checkPermission(Jenkins.ADMINISTER);
+    }
+
+    @Test
     void testImageFormValidationAcceptsImageName() {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         assertThat(descriptor.doCheckTestImages("host-x").kind).isEqualTo(FormValidation.Kind.OK);
@@ -300,6 +322,7 @@ class PoolConfigurationTest {
                 .when(descriptor).parseLabels(anyString());
         doNothing().when(descriptor).load();
         doNothing().when(descriptor).save();
+        doNothing().when(descriptor).checkPermission(Jenkins.ADMINISTER);
         return descriptor;
     }
 }
