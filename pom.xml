@@ -21,7 +21,7 @@
     </properties>
 
     <name>Pool Node Config</name>
-    <description>Configuration of ephemeral pool nodes.</description>
+
     <licenses>
         <license>
             <name>MIT License</name>
