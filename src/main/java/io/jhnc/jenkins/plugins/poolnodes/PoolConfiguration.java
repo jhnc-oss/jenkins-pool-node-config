@@ -52,6 +52,8 @@ public class PoolConfiguration extends GlobalConfiguration {
         private Set<LabelAtom> poolLabelAtoms;
         private Set<String> masterImages;
         private Set<String> testImages;
+        private boolean keepOffline;
+
 
         public DescriptorImpl() {
             load();
@@ -73,6 +75,9 @@ public class PoolConfiguration extends GlobalConfiguration {
             }
             if (json.has("testImages")) {
                 setTestImages(json.getString("testImages"));
+            }
+            if (json.has("keepOffline")) {
+                setKeepOffline(json.getBoolean("keepOffline"));
             }
             return super.configure(req, json);
         }
@@ -139,6 +144,15 @@ public class PoolConfiguration extends GlobalConfiguration {
 
         public void setTestImages(@CheckForNull String testImagesString) {
             this.testImages = parseElements(testImagesString);
+            save();
+        }
+
+        public boolean isKeepOffline() {
+            return this.keepOffline;
+        }
+
+        public void setKeepOffline(boolean keepOffline) {
+            this.keepOffline = keepOffline;
             save();
         }
 

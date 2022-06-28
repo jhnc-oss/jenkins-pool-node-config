@@ -315,6 +315,38 @@ class PoolConfigurationTest {
         assertThat(descriptor.doCheckTestImages(null).kind).isEqualTo(FormValidation.Kind.ERROR);
     }
 
+
+    @Test
+    void keepOfflineFalseOnDefault() {
+        final PoolConfiguration.DescriptorImpl descriptor = create();
+        assertThat(descriptor.isKeepOffline()).isFalse();
+    }
+
+    @Test
+    void setKeepOfflineSetsKeepOffline() {
+        final PoolConfiguration.DescriptorImpl descriptor = create();
+        descriptor.setKeepOffline(true);
+        assertThat(descriptor.isKeepOffline()).isTrue();
+    }
+
+    @Test
+    void setKeepOfflineSavesUpdate() {
+        final PoolConfiguration.DescriptorImpl descriptor = create();
+        descriptor.setKeepOffline(true);
+        assertThat(descriptor.isKeepOffline()).isTrue();
+        verify(descriptor).save();
+    }
+
+    @Test
+    void configureSetsKeepOffline() throws Descriptor.FormException {
+        final PoolConfiguration.DescriptorImpl descriptor = create();
+        final StaplerRequest req = mock(StaplerRequest.class);
+        final JSONObject json = new JSONObject().element("keepOffline", true);
+
+        descriptor.configure(req, json);
+        assertThat(descriptor.isKeepOffline()).isTrue();
+    }
+
     private PoolConfiguration.DescriptorImpl create() {
         final PoolConfiguration.DescriptorImpl descriptor = mock(PoolConfiguration.DescriptorImpl.class,
                 withSettings().defaultAnswer(CALLS_REAL_METHODS));

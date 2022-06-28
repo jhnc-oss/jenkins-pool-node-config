@@ -41,5 +41,9 @@ SOFTWARE.
             <f:textbox value="${descriptor.testImages}"
                        checkUrl="'descriptorByName/PoolConfiguration/checkTestImages?testImages='+escape(this.value)"/>
         </f:entry>
+
+        <f:entry title="${%config.keepOffline}" field="keepOffline">
+            <f:checkbox value="${descriptor.keepOffline}" default="false"/>
+        </f:entry>
     </f:section>
 </j:jelly>
