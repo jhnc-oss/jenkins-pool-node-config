@@ -24,11 +24,13 @@
 
 package io.jhnc.jenkins.plugins.poolnodes;
 
+import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import io.jhnc.jenkins.plugins.test.EnableJenkins;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.jvnet.hudson.test.JenkinsRule;
@@ -102,6 +104,42 @@ class PoolConfigurationIT {
         assertThat(entryField2.getValueAttribute()).isEqualTo("value-1 value-2");
     }
 
+    @Test
+    void keepOfflineValueIsSet(JenkinsRule r) throws Exception {
+        final PoolConfiguration.DescriptorImpl descriptor = getDescriptor(r);
+        final HtmlPage page = r.createWebClient().goTo("configure");
+
+        submitEntry(r, page, "keepOffline", true);
+
+        assertThat(getValueFromDescriptor(descriptor, "keepOffline")).isEqualTo("true");
+    }
+
+    @Test
+    void keepOfflineValueIsUpdated(JenkinsRule r) throws Exception {
+        final PoolConfiguration.DescriptorImpl descriptor = getDescriptor(r);
+        final HtmlPage page = r.createWebClient().goTo("configure");
+
+        submitEntry(r, page, "keepOffline", true);
+        assertThat(getValueFromDescriptor(descriptor, "keepOffline")).isEqualTo("true");
+
+        final HtmlPage page2 = r.createWebClient().goTo("configure");
+        submitEntry(r, page2, "keepOffline", false);
+        assertThat(getValueFromDescriptor(descriptor, "keepOffline")).isEqualTo("false");
+    }
+
+    @Test
+    void keepOfflineIsSavedAcrossConfigurations(JenkinsRule r) throws Exception {
+        final PoolConfiguration.DescriptorImpl descriptor = getDescriptor(r);
+        final HtmlPage page = r.createWebClient().goTo("configure");
+
+        submitEntry(r, page, "keepOffline", true);
+        assertThat(getValueFromDescriptor(descriptor, "keepOffline")).isEqualTo("true");
+
+        final HtmlPage page2 = r.createWebClient().goTo("configure");
+        final HtmlCheckBoxInput entryElement2 = page2.getElementByName("_.keepOffline");
+        assertThat(entryElement2.isChecked()).isTrue();
+    }
+
     private PoolConfiguration.DescriptorImpl getDescriptor(JenkinsRule r) {
         return r.jenkins.getDescriptorByType(PoolConfiguration.DescriptorImpl.class);
     }
@@ -119,6 +157,12 @@ class PoolConfigurationIT {
     private void submitEntry(JenkinsRule r, HtmlPage page, String entry, String value) throws Exception {
         final HtmlTextInput entryElement = page.getElementByName("_." + entry);
         entryElement.setValueAttribute(value);
+        r.submit(page.getFormByName("config"));
+    }
+
+    private void submitEntry(JenkinsRule r, HtmlPage page, String entry, boolean value) throws Exception {
+        final HtmlCheckBoxInput entryElement = page.getElementByName("_." + entry);
+        entryElement.setChecked(value);
         r.submit(page.getFormByName("config"));
     }
 
