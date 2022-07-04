@@ -54,7 +54,7 @@ class PoolConfigurationIT {
     @ViewTextFieldSource
     void entryCanBeSavedEmpty(String entry, JenkinsRule r) throws Exception {
         final PoolConfiguration.DescriptorImpl descriptor = getDescriptor(r);
-        final HtmlPage page = r.createWebClient().goTo("configure");
+        final HtmlPage page = goToConfigure(r);
 
         r.submit(page.getFormByName("config"));
         assertThat(getValueFromDescriptor(descriptor, entry)).isEmpty();
@@ -70,9 +70,8 @@ class PoolConfigurationIT {
     @ViewTextFieldSource
     void entryValueIsSet(String entry, JenkinsRule r) throws Exception {
         final PoolConfiguration.DescriptorImpl descriptor = getDescriptor(r);
-        final HtmlPage page = r.createWebClient().goTo("configure");
 
-        submitEntry(r, page, entry, "value-a value-b value-c");
+        submitEntry(r, goToConfigure(r), entry, "value-a value-b value-c");
         assertThat(getValuesFromDescriptor(descriptor, entry)).containsExactly("value-a", "value-b", "value-c");
     }
 
@@ -80,13 +79,11 @@ class PoolConfigurationIT {
     @ViewTextFieldSource
     void entryValueIsUpdated(String entry, JenkinsRule r) throws Exception {
         final PoolConfiguration.DescriptorImpl descriptor = getDescriptor(r);
-        final HtmlPage page = r.createWebClient().goTo("configure");
 
-        submitEntry(r, page, entry, "value-a value-b value-c");
+        submitEntry(r, goToConfigure(r), entry, "value-a value-b value-c");
         assertThat(getValuesFromDescriptor(descriptor, entry)).containsExactly("value-a", "value-b", "value-c");
 
-        final HtmlPage page2 = r.createWebClient().goTo("configure");
-        submitEntry(r, page2, entry, "value-a value-1 value-b value-2 value-3");
+        submitEntry(r, goToConfigure(r), entry, "value-a value-1 value-b value-2 value-3");
         assertThat(getValuesFromDescriptor(descriptor, entry)).containsExactly("value-1", "value-2", "value-3", "value-a", "value-b");
     }
 
@@ -94,22 +91,19 @@ class PoolConfigurationIT {
     @ViewTextFieldSource
     void entryIsSavedAcrossConfigurations(String entry, JenkinsRule r) throws Exception {
         final PoolConfiguration.DescriptorImpl descriptor = getDescriptor(r);
-        final HtmlPage page = r.createWebClient().goTo("configure");
 
-        submitEntry(r, page, entry, "value-1 value-2");
+        submitEntry(r, goToConfigure(r), entry, "value-1 value-2");
         assertThat(getValuesFromDescriptor(descriptor, entry)).containsExactly("value-1", "value-2");
 
-        final HtmlPage page2 = r.createWebClient().goTo("configure");
-        final HtmlTextInput entryField2 = page2.getElementByName("_." + entry);
+        final HtmlTextInput entryField2 = goToConfigure(r).getElementByName("_." + entry);
         assertThat(entryField2.getValueAttribute()).isEqualTo("value-1 value-2");
     }
 
     @Test
     void keepOfflineValueIsSet(JenkinsRule r) throws Exception {
         final PoolConfiguration.DescriptorImpl descriptor = getDescriptor(r);
-        final HtmlPage page = r.createWebClient().goTo("configure");
 
-        submitEntry(r, page, "keepOffline", true);
+        submitEntry(r, goToConfigure(r), "keepOffline", true);
 
         assertThat(getValueFromDescriptor(descriptor, "keepOffline")).isEqualTo("true");
     }
@@ -117,26 +111,22 @@ class PoolConfigurationIT {
     @Test
     void keepOfflineValueIsUpdated(JenkinsRule r) throws Exception {
         final PoolConfiguration.DescriptorImpl descriptor = getDescriptor(r);
-        final HtmlPage page = r.createWebClient().goTo("configure");
 
-        submitEntry(r, page, "keepOffline", true);
+        submitEntry(r, goToConfigure(r), "keepOffline", true);
         assertThat(getValueFromDescriptor(descriptor, "keepOffline")).isEqualTo("true");
 
-        final HtmlPage page2 = r.createWebClient().goTo("configure");
-        submitEntry(r, page2, "keepOffline", false);
+        submitEntry(r, goToConfigure(r), "keepOffline", false);
         assertThat(getValueFromDescriptor(descriptor, "keepOffline")).isEqualTo("false");
     }
 
     @Test
     void keepOfflineIsSavedAcrossConfigurations(JenkinsRule r) throws Exception {
         final PoolConfiguration.DescriptorImpl descriptor = getDescriptor(r);
-        final HtmlPage page = r.createWebClient().goTo("configure");
 
-        submitEntry(r, page, "keepOffline", true);
+        submitEntry(r, goToConfigure(r), "keepOffline", true);
         assertThat(getValueFromDescriptor(descriptor, "keepOffline")).isEqualTo("true");
 
-        final HtmlPage page2 = r.createWebClient().goTo("configure");
-        final HtmlCheckBoxInput entryElement2 = page2.getElementByName("_.keepOffline");
+        final HtmlCheckBoxInput entryElement2 = goToConfigure(r).getElementByName("_.keepOffline");
         assertThat(entryElement2.isChecked()).isTrue();
     }
 
@@ -166,6 +156,9 @@ class PoolConfigurationIT {
         r.submit(page.getFormByName("config"));
     }
 
+    private HtmlPage goToConfigure(JenkinsRule r) throws Exception {
+        return r.createWebClient().goTo("configure");
+    }
 
     @Documented
     @Target(ElementType.METHOD)
