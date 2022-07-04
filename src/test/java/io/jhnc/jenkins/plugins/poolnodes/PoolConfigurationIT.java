@@ -51,7 +51,7 @@ import static com.google.common.truth.Truth.assertThat;
 class PoolConfigurationIT {
 
     @ParameterizedTest
-    @ViewFieldSource
+    @ViewTextFieldSource
     void entryCanBeSavedEmpty(String entry, JenkinsRule r) throws Exception {
         final PoolConfiguration.DescriptorImpl descriptor = getDescriptor(r);
         final HtmlPage page = r.createWebClient().goTo("configure");
@@ -67,7 +67,7 @@ class PoolConfigurationIT {
     }
 
     @ParameterizedTest
-    @ViewFieldSource
+    @ViewTextFieldSource
     void entryValueIsSet(String entry, JenkinsRule r) throws Exception {
         final PoolConfiguration.DescriptorImpl descriptor = getDescriptor(r);
         final HtmlPage page = r.createWebClient().goTo("configure");
@@ -77,7 +77,7 @@ class PoolConfigurationIT {
     }
 
     @ParameterizedTest
-    @ViewFieldSource
+    @ViewTextFieldSource
     void entryValueIsUpdated(String entry, JenkinsRule r) throws Exception {
         final PoolConfiguration.DescriptorImpl descriptor = getDescriptor(r);
         final HtmlPage page = r.createWebClient().goTo("configure");
@@ -91,7 +91,7 @@ class PoolConfigurationIT {
     }
 
     @ParameterizedTest
-    @ViewFieldSource
+    @ViewTextFieldSource
     void entryIsSavedAcrossConfigurations(String entry, JenkinsRule r) throws Exception {
         final PoolConfiguration.DescriptorImpl descriptor = getDescriptor(r);
         final HtmlPage page = r.createWebClient().goTo("configure");
@@ -171,6 +171,6 @@ class PoolConfigurationIT {
     @Target(ElementType.METHOD)
     @Retention(RetentionPolicy.RUNTIME)
     @ValueSource(strings = {"poolLabels", "masterImages", "testImages"})
-    private @interface ViewFieldSource {
+    private @interface ViewTextFieldSource {
     }
 }
