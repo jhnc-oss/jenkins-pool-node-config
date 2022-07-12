@@ -15,7 +15,7 @@
     <packaging>hpi</packaging>
 
     <properties>
-        <jenkins.version>2.332.1</jenkins.version>
+        <jenkins.version>2.346.1</jenkins.version>
 
         <junit.jupiter.version>5.8.2</junit.jupiter.version>
     </properties>
