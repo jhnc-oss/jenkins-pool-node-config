@@ -48,6 +48,7 @@ public class PoolLabelFinder extends LabelFinder {
         this.nodeNames = nodeNames;
     }
 
+    @NonNull
     @Override
     public Collection<LabelAtom> findLabels(@NonNull Node node) {
         if (nodeNames.isMasterNode(node)) {
