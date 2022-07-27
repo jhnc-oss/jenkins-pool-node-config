@@ -17,7 +17,7 @@
     <properties>
         <jenkins.version>2.346.1</jenkins.version>
 
-        <junit.jupiter.version>5.8.2</junit.jupiter.version>
+        <junit.jupiter.version>5.9.0</junit.jupiter.version>
     </properties>
 
     <name>Pool Node Config</name>
