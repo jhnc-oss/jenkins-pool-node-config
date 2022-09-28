@@ -43,6 +43,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -102,18 +103,18 @@ public class PoolConfiguration extends GlobalConfiguration {
 
         @NonNull
         public String getPoolLabels() {
-            return this.<Set<LabelAtom>>ensureNotNull(poolLabelAtoms, Collections.emptySet()).stream()
+            return Objects.<Set<LabelAtom>>requireNonNullElse(poolLabelAtoms, Collections.emptySet()).stream()
                     .map(LabelAtom::getExpression)
                     .collect(Collectors.joining(" "));
         }
 
         @NonNull
         public Set<LabelAtom> getPoolLabelAtoms() {
-            return ensureNotNull(poolLabelAtoms, Collections.emptySet());
+            return Objects.requireNonNullElse(poolLabelAtoms, Collections.emptySet());
         }
 
         public void setPoolLabels(@CheckForNull String labelString) {
-            this.poolLabelAtoms = parseLabels(ensureNotNull(labelString, "").trim());
+            this.poolLabelAtoms = parseLabels(Objects.requireNonNullElse(labelString, "").trim());
             save();
         }
 
@@ -124,7 +125,7 @@ public class PoolConfiguration extends GlobalConfiguration {
 
         @NonNull
         public Collection<String> getMasterImageNames() {
-            return ensureNotNull(masterImages, Collections.emptySet());
+            return Objects.requireNonNullElse(masterImages, Collections.emptySet());
         }
 
         public void setMasterImages(@CheckForNull String masterImagesString) {
@@ -139,7 +140,7 @@ public class PoolConfiguration extends GlobalConfiguration {
 
         @NonNull
         public Collection<String> getTestImageNames() {
-            return ensureNotNull(testImages, Collections.emptySet());
+            return Objects.requireNonNullElse(testImages, Collections.emptySet());
         }
 
         public void setTestImages(@CheckForNull String testImagesString) {
@@ -165,14 +166,9 @@ public class PoolConfiguration extends GlobalConfiguration {
         }
 
         @NonNull
-        private <T> T ensureNotNull(@CheckForNull T value, @NonNull T fallbackValue) {
-            return value == null ? fallbackValue : value;
-        }
-
-        @NonNull
         private Set<String> parseElements(@CheckForNull String str) {
-            final Set<String> elements = new HashSet<>(Arrays.asList(ensureNotNull(str, "").split(" ")));
-            elements.removeIf(item -> ensureNotNull(item, "").trim().isEmpty());
+            final Set<String> elements = new HashSet<>(Arrays.asList(Objects.requireNonNullElse(str, "").split(" ")));
+            elements.removeIf(item -> Objects.requireNonNullElse(item, "").trim().isEmpty());
             return elements;
         }
 
