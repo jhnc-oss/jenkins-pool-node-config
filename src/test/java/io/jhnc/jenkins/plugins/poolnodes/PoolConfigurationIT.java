@@ -24,10 +24,10 @@
 
 package io.jhnc.jenkins.plugins.poolnodes;
 
-import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.htmlunit.html.HtmlCheckBoxInput;
+import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlTextInput;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -96,7 +96,7 @@ class PoolConfigurationIT {
         assertThat(getValuesFromDescriptor(descriptor, entry)).containsExactly("value-1", "value-2");
 
         final HtmlTextInput entryField2 = goToConfigure(r).getElementByName("_." + entry);
-        assertThat(entryField2.getValueAttribute()).isEqualTo("value-1 value-2");
+        assertThat(entryField2.getValue()).isEqualTo("value-1 value-2");
     }
 
     @Test
@@ -146,7 +146,7 @@ class PoolConfigurationIT {
 
     private void submitEntry(JenkinsRule r, HtmlPage page, String entry, String value) throws Exception {
         final HtmlTextInput entryElement = page.getElementByName("_." + entry);
-        entryElement.setValueAttribute(value);
+        entryElement.setValue(value);
         r.submit(page.getFormByName("config"));
     }
 
