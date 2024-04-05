@@ -32,6 +32,10 @@ import net.sf.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.kohsuke.stapler.StaplerRequest;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
@@ -83,7 +87,7 @@ class PoolConfigurationTest {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         descriptor.setPoolLabels("abc");
         assertThat(descriptor.getPoolLabels()).isEqualTo("abc");
-        assertThat(descriptor.getPoolLabelAtoms()).containsExactly(new LabelAtom("abc"));
+        assertThat(descriptor.getPoolLabelAtoms()).containsExactlyElementsIn(asLabelAtoms(List.of("abc")));
     }
 
     @Test
@@ -91,7 +95,7 @@ class PoolConfigurationTest {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         descriptor.setPoolLabels("xyz");
         assertThat(descriptor.getPoolLabels()).isEqualTo("xyz");
-        assertThat(descriptor.getPoolLabelAtoms()).containsExactly(new LabelAtom("xyz"));
+        assertThat(descriptor.getPoolLabelAtoms()).containsExactlyElementsIn(asLabelAtoms(List.of("xyz")));
         verify(descriptor).save();
     }
 
@@ -99,8 +103,7 @@ class PoolConfigurationTest {
     void getLabelAtoms() {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         descriptor.setPoolLabels("abc def ghi");
-        assertThat(descriptor.getPoolLabelAtoms()).containsExactly(new LabelAtom("abc"),
-                new LabelAtom("def"), new LabelAtom("ghi"));
+        assertThat(descriptor.getPoolLabelAtoms()).containsExactlyElementsIn(asLabelAtoms(List.of("abc", "def", "ghi")));
     }
 
     @Test
@@ -112,8 +115,8 @@ class PoolConfigurationTest {
         descriptor.configure(req, json);
         assertThat(descriptor.getPoolLabels().split(" "))
                 .asList().containsExactly("label-1", "label-2", "label-3");
-        assertThat(descriptor.getPoolLabelAtoms()).containsExactly(new LabelAtom("label-1"),
-                new LabelAtom("label-2"), new LabelAtom("label-3"));
+        assertThat(descriptor.getPoolLabelAtoms())
+                .containsExactlyElementsIn(asLabelAtoms(List.of("label-1", "label-2", "label-3")));
     }
 
     @Test
@@ -347,6 +350,93 @@ class PoolConfigurationTest {
         assertThat(descriptor.isKeepOffline()).isTrue();
     }
 
+    @Test
+    void keepOfflineNodesEmptyOnDefault() {
+        final PoolConfiguration.DescriptorImpl descriptor = create();
+        assertThat(descriptor.getKeepOfflineNodes()).isEmpty();
+        assertThat(descriptor.getKeepOfflineNodes()).isEmpty();
+    }
+
+    @Test
+    void keepOfflineNodesIsSafeToNullOrEmpty() {
+        final PoolConfiguration.DescriptorImpl descriptor = create();
+        descriptor.setKeepOfflineNodes(null);
+        assertThat(descriptor.getKeepOfflineNodes()).isEmpty();
+
+        descriptor.setKeepOfflineNodes("");
+        assertThat(descriptor.getKeepOfflineNodes()).isEmpty();
+        assertThat(descriptor.getKeepOfflineNodesLabelAtoms()).isEmpty();
+
+        descriptor.setKeepOfflineNodes("    ");
+        assertThat(descriptor.getKeepOfflineNodes()).isEmpty();
+        assertThat(descriptor.getKeepOfflineNodesLabelAtoms()).isEmpty();
+    }
+
+    @Test
+    void setKeepOfflineNodesTrimsString() {
+        final PoolConfiguration.DescriptorImpl descriptor = create();
+        descriptor.setKeepOfflineNodes(" host-1   ho-s-t-2  h-ost-3  ");
+        assertThat(descriptor.getKeepOfflineNodes().split(" "))
+                .asList().containsExactly("host-1", "ho-s-t-2", "h-ost-3");
+        assertThat(descriptor.getKeepOfflineNodesLabelAtoms()).containsExactlyElementsIn(asLabelAtoms(List.of("host-1", "ho-s-t-2", "h-ost-3")));
+    }
+
+    @Test
+    void setKeepOfflineNodesSetsLabel() {
+        final PoolConfiguration.DescriptorImpl descriptor = create();
+        descriptor.setKeepOfflineNodes("xxyyzz");
+        assertThat(descriptor.getKeepOfflineNodes()).isEqualTo("xxyyzz");
+        assertThat(descriptor.getKeepOfflineNodesLabelAtoms()).containsExactlyElementsIn(asLabelAtoms(List.of("xxyyzz")));
+    }
+
+    @Test
+    void setKeepOfflineNodesSavesUpdate() {
+        final PoolConfiguration.DescriptorImpl descriptor = create();
+        descriptor.setKeepOfflineNodes("abc");
+        assertThat(descriptor.getKeepOfflineNodes()).isEqualTo("abc");
+        assertThat(descriptor.getKeepOfflineNodesLabelAtoms()).containsExactlyElementsIn(asLabelAtoms(List.of("abc")));
+        verify(descriptor).save();
+    }
+
+    @Test
+    void configureKeepOfflineNodes() throws Descriptor.FormException {
+        final PoolConfiguration.DescriptorImpl descriptor = create();
+        final StaplerRequest req = mock(StaplerRequest.class);
+        final JSONObject json = new JSONObject().element("keepOfflineNodes", "host.a host.b host.c");
+
+        descriptor.configure(req, json);
+        assertThat(descriptor.getKeepOfflineNodes().split(" "))
+                .asList().containsExactly("host.a", "host.b", "host.c");
+        assertThat(descriptor.getKeepOfflineNodesLabelAtoms())
+                .containsExactlyElementsIn(asLabelAtoms(List.of("host.a", "host.b", "host.c")));
+    }
+
+    @Test
+    void keepOfflineNodesFormValidationChecksPermission() {
+        final PoolConfiguration.DescriptorImpl descriptor = create();
+        assertThat(descriptor.doCheckKeepOfflineNodes("y").kind).isEqualTo(FormValidation.Kind.OK);
+        verify(descriptor).checkPermission(Jenkins.ADMINISTER);
+    }
+
+    @Test
+    void keepOfflineNodesFormValidationAcceptsHostName() {
+        final PoolConfiguration.DescriptorImpl descriptor = create();
+        assertThat(descriptor.doCheckKeepOfflineNodes("host-5").kind).isEqualTo(FormValidation.Kind.OK);
+    }
+
+    @Test
+    void keepOfflineNodesFormValidationAcceptsEmpty() {
+        final PoolConfiguration.DescriptorImpl descriptor = create();
+        assertThat(descriptor.doCheckKeepOfflineNodes("").kind).isEqualTo(FormValidation.Kind.OK);
+        assertThat(descriptor.doCheckKeepOfflineNodes(" ").kind).isEqualTo(FormValidation.Kind.OK);
+    }
+
+    @Test
+    void keepOfflineNodesFormValidationRejectsNull() {
+        final PoolConfiguration.DescriptorImpl descriptor = create();
+        assertThat(descriptor.doCheckKeepOfflineNodes(null).kind).isEqualTo(FormValidation.Kind.ERROR);
+    }
+
     private PoolConfiguration.DescriptorImpl create() {
         final PoolConfiguration.DescriptorImpl descriptor = mock(PoolConfiguration.DescriptorImpl.class,
                 withSettings().defaultAnswer(CALLS_REAL_METHODS));
@@ -356,5 +446,9 @@ class PoolConfigurationTest {
         doNothing().when(descriptor).save();
         doNothing().when(descriptor).checkPermission(Jenkins.ADMINISTER);
         return descriptor;
+    }
+
+    private Set<LabelAtom> asLabelAtoms(List<String> labels) {
+        return labels.stream().map(LabelAtom::new).collect(Collectors.toSet());
     }
 }

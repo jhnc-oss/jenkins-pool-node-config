@@ -47,20 +47,23 @@ final class TestHelper {
         return node;
     }
 
-    public static Node create(String name, Collection<String> label) {
+    public static Node create(String name, Collection<String> labels) {
         final Node node = create(name);
-        final Set<LabelAtom> labelAtoms = label.stream().map(LabelAtom::new).collect(Collectors.toSet());
-        when(node.getAssignedLabels()).thenReturn(labelAtoms);
-        when(node.getLabelString()).thenReturn(String.join(" ", label));
+        when(node.getAssignedLabels()).thenReturn(labelStringToAtom(labels));
+        when(node.getLabelString()).thenReturn(String.join(" ", labels));
         return node;
     }
 
     public static Set<LabelAtom> simpleParseLabel(String labelString) {
-        return Arrays.stream(Util.fixNull(labelString).split(" "))
+        return labelStringToAtom(Arrays.stream(Util.fixNull(labelString).split(" "))
                 .filter(s -> !s.isEmpty())
-                .map(LabelAtom::new)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toSet()));
     }
+
+    private static Set<LabelAtom> labelStringToAtom(Collection<String> labels) {
+        return labels.stream().map(LabelAtom::new).collect(Collectors.toSet());
+    }
+
 
     public static class TestNodeNames extends NodeNames {
         private final PoolConfiguration.DescriptorImpl descriptor;
