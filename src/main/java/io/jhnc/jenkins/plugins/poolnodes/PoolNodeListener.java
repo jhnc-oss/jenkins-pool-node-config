@@ -36,15 +36,11 @@ public class PoolNodeListener extends ComputerListener {
         final var descriptor = getDescriptor();
 
         if (computer != null && descriptor != null) {
-            final Node node = computer.getNode();
-
-            if (nodeNames.isProdNode(node)) {
+            if (nodeNames.isProdNode(computer.getNode())) {
                 updatePoolOnlineState(computer, descriptor);
             }
 
-            if (shouldKeepOffline(node, descriptor)) {
-                updateNodeOnlineState(computer, descriptor);
-            }
+            updateNodeOnlineState(computer, descriptor);
         }
     }
 
