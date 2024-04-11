@@ -5,6 +5,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.Computer;
+import hudson.model.Node;
 import hudson.model.TaskListener;
 import hudson.remoting.Channel;
 import hudson.slaves.ComputerListener;
@@ -12,7 +13,10 @@ import hudson.slaves.OfflineCause;
 import jenkins.model.Jenkins;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Extension
 public class PoolNodeListener extends ComputerListener {
@@ -29,16 +33,28 @@ public class PoolNodeListener extends ComputerListener {
 
     @Override
     public void preOnline(Computer computer, Channel channel, FilePath root, TaskListener listener) {
-        if (computer != null && nodeNames.isProdNode(computer.getNode())) {
-            updateOnlineState(computer);
+        final var descriptor = getDescriptor();
+
+        if (computer != null && descriptor != null) {
+            if (nodeNames.isProdNode(computer.getNode())) {
+                updatePoolOnlineState(computer, descriptor);
+            }
+
+            updateNodeOnlineState(computer, descriptor);
         }
     }
 
     @Override
     public void onConfigurationChange() {
-        for (Computer computer : getComputers()) {
-            if (nodeNames.isProdNode(computer.getNode())) {
-                updateOnlineState(computer);
+        final var descriptor = getDescriptor();
+
+        if (descriptor != null) {
+            for (final Computer computer : getComputers()) {
+                if (nodeNames.isProdNode(computer.getNode())) {
+                    updatePoolOnlineState(computer, descriptor);
+                }
+
+                updateNodeOnlineState(computer, descriptor);
             }
         }
     }
@@ -50,19 +66,43 @@ public class PoolNodeListener extends ComputerListener {
 
     @NonNull
     protected List<Computer> getComputers() {
-        return Arrays.asList(Jenkins.get().getComputers());
+        return Arrays.stream(Jenkins.get().getComputers()).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
-    private void updateOnlineState(@NonNull Computer computer) {
-        final PoolConfiguration.DescriptorImpl descriptor = getDescriptor();
+    private void updatePoolOnlineState(@NonNull Computer computer, @NonNull PoolConfiguration.DescriptorImpl descriptor) {
+        final boolean keepOffline = descriptor.isKeepOffline();
+        final OfflineCause cause = keepOffline ? new PoolOfflineCause() : null;
+        computer.setTemporarilyOffline(keepOffline, cause);
+    }
 
-        if (descriptor != null) {
-            computer.setTemporarilyOffline(descriptor.isKeepOffline(), new OfflineCause() {
-                @Override
-                public String toString() {
-                    return Messages.PoolNodeListener_offlineCause();
-                }
-            });
+    private void updateNodeOnlineState(@NonNull Computer computer, @NonNull PoolConfiguration.DescriptorImpl descriptor) {
+        if (shouldKeepOffline(computer.getNode(), descriptor)) {
+            computer.setTemporarilyOffline(true, new NodeOfflineCause());
+        } else if (computer.isOffline() && computer.getOfflineCause() instanceof NodeOfflineCause) {
+            computer.setTemporarilyOffline(false, null);
+        }
+    }
+
+    private boolean shouldKeepOffline(@CheckForNull Node node, @NonNull PoolConfiguration.DescriptorImpl descriptor) {
+        if (node == null) {
+            return false;
+        }
+        return !Collections.disjoint(node.getAssignedLabels(), descriptor.getKeepOfflineNodesLabelAtoms());
+    }
+
+
+    public static class NodeOfflineCause extends OfflineCause {
+        @Override
+        public String toString() {
+            return Messages.PoolNodeListener_NodeOfflineCause_offlineCause();
+        }
+    }
+
+
+    public static class PoolOfflineCause extends OfflineCause {
+        @Override
+        public String toString() {
+            return Messages.PoolNodeListener_PoolOfflineCause_offlineCause();
         }
     }
 }

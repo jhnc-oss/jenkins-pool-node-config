@@ -163,7 +163,7 @@ class PoolConfigurationIT {
     @Documented
     @Target(ElementType.METHOD)
     @Retention(RetentionPolicy.RUNTIME)
-    @ValueSource(strings = {"poolLabels", "masterImages", "testImages"})
+    @ValueSource(strings = {"poolLabels", "masterImages", "testImages", "keepOfflineNodes"})
     private @interface ViewTextFieldSource {
     }
 }

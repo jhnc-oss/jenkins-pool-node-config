@@ -26,6 +26,7 @@ package io.jhnc.jenkins.plugins.poolnodes;
 
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import hudson.Extension;
 import hudson.model.Descriptor;
 import hudson.model.Label;
@@ -47,6 +48,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("PMD.TooManyMethods")
 public class PoolConfiguration extends GlobalConfiguration {
     @Extension
     public static class DescriptorImpl extends Descriptor<GlobalConfiguration> {
@@ -54,6 +56,7 @@ public class PoolConfiguration extends GlobalConfiguration {
         private Set<String> masterImages;
         private Set<String> testImages;
         private boolean keepOffline;
+        private Set<LabelAtom> keepOfflineNodes;
 
 
         public DescriptorImpl() {
@@ -80,6 +83,9 @@ public class PoolConfiguration extends GlobalConfiguration {
             if (json.has("keepOffline")) {
                 setKeepOffline(json.getBoolean("keepOffline"));
             }
+            if (json.has("keepOfflineNodes")) {
+                setKeepOfflineNodes(json.getString("keepOfflineNodes"));
+            }
             return super.configure(req, json);
         }
 
@@ -101,11 +107,15 @@ public class PoolConfiguration extends GlobalConfiguration {
             return validateParameter(testImages, "Test Images");
         }
 
+        @RequirePOST
+        public FormValidation doCheckKeepOfflineNodes(@QueryParameter String nodes) {
+            checkPermission(Jenkins.ADMINISTER);
+            return validateParameter(nodes, "Keep offline Nodes");
+        }
+
         @NonNull
         public String getPoolLabels() {
-            return Objects.<Set<LabelAtom>>requireNonNullElse(poolLabelAtoms, Collections.emptySet()).stream()
-                    .map(LabelAtom::getExpression)
-                    .collect(Collectors.joining(" "));
+            return labelAtomsToString(poolLabelAtoms);
         }
 
         @NonNull
@@ -114,7 +124,7 @@ public class PoolConfiguration extends GlobalConfiguration {
         }
 
         public void setPoolLabels(@CheckForNull String labelString) {
-            this.poolLabelAtoms = parseLabels(Objects.requireNonNullElse(labelString, "").trim());
+            this.poolLabelAtoms = parseLabels(labelString);
             save();
         }
 
@@ -157,12 +167,26 @@ public class PoolConfiguration extends GlobalConfiguration {
             save();
         }
 
-        protected Set<LabelAtom> parseLabels(@NonNull String labelString) {
-            return Label.parse(labelString);
+        public String getKeepOfflineNodes() {
+            return labelAtomsToString(keepOfflineNodes);
+        }
+
+        @NonNull
+        public Set<LabelAtom> getKeepOfflineNodesLabelAtoms() {
+            return Objects.requireNonNullElse(keepOfflineNodes, Collections.emptySet());
+        }
+
+        public void setKeepOfflineNodes(@CheckForNull String keepOfflineNodes) {
+            this.keepOfflineNodes = parseLabels(keepOfflineNodes);
+            save();
         }
 
         public void checkPermission(@NonNull Permission permission) {
             Jenkins.get().checkPermission(permission);
+        }
+
+        protected Set<LabelAtom> parseLabels(@Nullable String labelString) {
+            return Label.parse(Objects.requireNonNullElse(labelString, "").trim());
         }
 
         @NonNull
@@ -183,6 +207,13 @@ public class PoolConfiguration extends GlobalConfiguration {
                 return FormValidation.error(Messages.PoolConfiguration_validationError(name));
             }
             return FormValidation.ok();
+        }
+
+        @NonNull
+        private String labelAtomsToString(Set<LabelAtom> labelAtoms) {
+            return Objects.<Set<LabelAtom>>requireNonNullElse(labelAtoms, Collections.emptySet()).stream()
+                    .map(LabelAtom::getExpression)
+                    .collect(Collectors.joining(" "));
         }
     }
 }

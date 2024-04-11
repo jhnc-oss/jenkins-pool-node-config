@@ -22,4 +22,5 @@ Configuration is available through *Global Configuration*:
 - **Labels**: Labels assigned to *Prod* images (whitespace separated)
 - **Master Images**: Name prefix of *Master* images
 - **Test Images**: Name prefix of *Test* images
-- **Keep offline**: Keep all *Prod* images offline
+- **Keep Pool Agents offline**: Keep all *Prod* image agents offline
+- **Keep specific nodes offline**: Keep all listed agents offline
