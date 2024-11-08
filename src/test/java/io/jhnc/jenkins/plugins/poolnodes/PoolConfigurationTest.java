@@ -30,7 +30,7 @@ import hudson.util.FormValidation;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.junit.jupiter.api.Test;
-import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerRequest2;
 
 import java.util.List;
 import java.util.Set;
@@ -109,7 +109,7 @@ class PoolConfigurationTest {
     @Test
     void configureSetsLabels() throws Descriptor.FormException {
         final PoolConfiguration.DescriptorImpl descriptor = create();
-        final StaplerRequest req = mock(StaplerRequest.class);
+        final StaplerRequest2 req = mock(StaplerRequest2.class);
         final JSONObject json = new JSONObject().element("poolLabels", "label-1 label-2 label-3");
 
         descriptor.configure(req, json);
@@ -196,7 +196,7 @@ class PoolConfigurationTest {
     @Test
     void configureSetsMasterImages() throws Descriptor.FormException {
         final PoolConfiguration.DescriptorImpl descriptor = create();
-        final StaplerRequest req = mock(StaplerRequest.class);
+        final StaplerRequest2 req = mock(StaplerRequest2.class);
         final JSONObject json = new JSONObject().element("masterImages", "host-a host-b host-c");
 
         descriptor.configure(req, json);
@@ -283,7 +283,7 @@ class PoolConfigurationTest {
     @Test
     void configureSetsTestImages() throws Descriptor.FormException {
         final PoolConfiguration.DescriptorImpl descriptor = create();
-        final StaplerRequest req = mock(StaplerRequest.class);
+        final StaplerRequest2 req = mock(StaplerRequest2.class);
         final JSONObject json = new JSONObject().element("testImages", "host.a host.b host.c");
 
         descriptor.configure(req, json);
@@ -343,7 +343,7 @@ class PoolConfigurationTest {
     @Test
     void configureSetsKeepOffline() throws Descriptor.FormException {
         final PoolConfiguration.DescriptorImpl descriptor = create();
-        final StaplerRequest req = mock(StaplerRequest.class);
+        final StaplerRequest2 req = mock(StaplerRequest2.class);
         final JSONObject json = new JSONObject().element("keepOffline", true);
 
         descriptor.configure(req, json);
@@ -401,7 +401,7 @@ class PoolConfigurationTest {
     @Test
     void configureKeepOfflineNodes() throws Descriptor.FormException {
         final PoolConfiguration.DescriptorImpl descriptor = create();
-        final StaplerRequest req = mock(StaplerRequest.class);
+        final StaplerRequest2 req = mock(StaplerRequest2.class);
         final JSONObject json = new JSONObject().element("keepOfflineNodes", "host.a host.b host.c");
 
         descriptor.configure(req, json);
