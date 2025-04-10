@@ -70,16 +70,14 @@ public class PoolNodeListener extends ComputerListener {
     }
 
     private void updatePoolOnlineState(@NonNull Computer computer, @NonNull PoolConfiguration.DescriptorImpl descriptor) {
-        final boolean keepOffline = descriptor.isKeepOffline();
-        final OfflineCause cause = keepOffline ? new PoolOfflineCause() : null;
-        computer.setTemporarilyOffline(keepOffline, cause);
+        computer.setTemporaryOfflineCause(descriptor.isKeepOffline() ? new PoolOfflineCause() : null);
     }
 
     private void updateNodeOnlineState(@NonNull Computer computer, @NonNull PoolConfiguration.DescriptorImpl descriptor) {
         if (shouldKeepOffline(computer.getNode(), descriptor)) {
-            computer.setTemporarilyOffline(true, new NodeOfflineCause());
+            computer.setTemporaryOfflineCause(new NodeOfflineCause());
         } else if (computer.isOffline() && computer.getOfflineCause() instanceof NodeOfflineCause) {
-            computer.setTemporarilyOffline(false, null);
+            computer.setTemporaryOfflineCause(null);
         }
     }
 
