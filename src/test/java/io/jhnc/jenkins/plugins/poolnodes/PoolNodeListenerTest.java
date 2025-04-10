@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -37,7 +35,7 @@ class PoolNodeListenerTest {
         final PoolNodeListener listener = create(true);
         listener.preOnline(computer, null, null, null);
 
-        verify(computer, never()).setTemporarilyOffline(anyBoolean(), any());
+        verify(computer, never()).setTemporaryOfflineCause(any());
     }
 
     @Test
@@ -47,7 +45,7 @@ class PoolNodeListenerTest {
         final PoolNodeListener listener = create(false);
         listener.preOnline(computer, null, null, null);
 
-        verify(computer).setTemporarilyOffline(eq(false), isNull());
+        verify(computer).setTemporaryOfflineCause(isNull());
     }
 
     @Test
@@ -57,7 +55,7 @@ class PoolNodeListenerTest {
         final PoolNodeListener listener = create(true);
         listener.preOnline(computer, null, null, null);
 
-        verify(computer).setTemporarilyOffline(eq(true), any(PoolNodeListener.PoolOfflineCause.class));
+        verify(computer).setTemporaryOfflineCause(any(PoolNodeListener.PoolOfflineCause.class));
     }
 
     @Test
@@ -67,7 +65,7 @@ class PoolNodeListenerTest {
         final PoolNodeListener listener = create(true);
         listener.preOnline(computer, null, null, null);
 
-        verify(computer).setTemporarilyOffline(eq(true), any(PoolNodeListener.NodeOfflineCause.class));
+        verify(computer).setTemporaryOfflineCause(any(PoolNodeListener.NodeOfflineCause.class));
     }
 
     @Test
@@ -77,7 +75,7 @@ class PoolNodeListenerTest {
         final PoolNodeListener listener = create(true);
         listener.preOnline(computer, null, null, null);
 
-        verify(computer, never()).setTemporarilyOffline(eq(true), any());
+        verify(computer, never()).setTemporaryOfflineCause(any());
     }
 
     @Test
@@ -112,10 +110,10 @@ class PoolNodeListenerTest {
 
         listener.onConfigurationChange();
 
-        verify(nodes.get(0), never()).setTemporarilyOffline(anyBoolean(), any());
-        verify(nodes.get(1)).setTemporarilyOffline(eq(true), any(PoolNodeListener.PoolOfflineCause.class));
-        verify(nodes.get(2), never()).setTemporarilyOffline(anyBoolean(), any());
-        verify(nodes.get(3)).setTemporarilyOffline(eq(true), any(PoolNodeListener.PoolOfflineCause.class));
+        verify(nodes.get(0), never()).setTemporaryOfflineCause(any());
+        verify(nodes.get(1)).setTemporaryOfflineCause(any(PoolNodeListener.PoolOfflineCause.class));
+        verify(nodes.get(2), never()).setTemporaryOfflineCause(any());
+        verify(nodes.get(3)).setTemporaryOfflineCause(any(PoolNodeListener.PoolOfflineCause.class));
     }
 
     @Test
@@ -128,8 +126,8 @@ class PoolNodeListenerTest {
 
         listener.onConfigurationChange();
 
-        verify(nodes.get(0), never()).setTemporarilyOffline(anyBoolean(), any());
-        verify(nodes.get(1)).setTemporarilyOffline(eq(false), isNull());
+        verify(nodes.get(0), never()).setTemporaryOfflineCause(any());
+        verify(nodes.get(1)).setTemporaryOfflineCause(isNull());
     }
 
     @Test
@@ -148,11 +146,11 @@ class PoolNodeListenerTest {
 
         listener.onConfigurationChange();
 
-        verify(nodes.get(0), never()).setTemporarilyOffline(anyBoolean(), any());
-        verify(nodes.get(1)).setTemporarilyOffline(eq(true), any(PoolNodeListener.NodeOfflineCause.class));
-        verify(nodes.get(2)).setTemporarilyOffline(eq(true), any(PoolNodeListener.NodeOfflineCause.class));
-        verify(nodes.get(3), never()).setTemporarilyOffline(anyBoolean(), any());
-        verify(nodes.get(4)).setTemporarilyOffline(eq(false), isNull());
+        verify(nodes.get(0), never()).setTemporaryOfflineCause(any());
+        verify(nodes.get(1)).setTemporaryOfflineCause(any(PoolNodeListener.NodeOfflineCause.class));
+        verify(nodes.get(2)).setTemporaryOfflineCause(any(PoolNodeListener.NodeOfflineCause.class));
+        verify(nodes.get(3), never()).setTemporaryOfflineCause(any());
+        verify(nodes.get(4)).setTemporaryOfflineCause(isNull());
     }
 
     @Test
@@ -165,7 +163,7 @@ class PoolNodeListenerTest {
 
         listener.onConfigurationChange();
 
-        verify(alreadyOffline, never()).setTemporarilyOffline(anyBoolean(), any());
+        verify(alreadyOffline, never()).setTemporaryOfflineCause(any());
     }
 
     @Test
