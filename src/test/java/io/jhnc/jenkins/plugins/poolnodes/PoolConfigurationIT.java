@@ -27,7 +27,7 @@ package io.jhnc.jenkins.plugins.poolnodes;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.htmlunit.html.HtmlCheckBoxInput;
 import org.htmlunit.html.HtmlPage;
-import org.htmlunit.html.HtmlTextInput;
+import org.htmlunit.html.impl.SelectableTextInput;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -95,8 +95,8 @@ class PoolConfigurationIT {
         submitEntry(r, goToConfigure(r), entry, "value-1 value-2");
         assertThat(getValuesFromDescriptor(descriptor, entry)).containsExactly("value-1", "value-2");
 
-        final HtmlTextInput entryField2 = goToConfigure(r).getElementByName("_." + entry);
-        assertThat(entryField2.getValue()).isEqualTo("value-1 value-2");
+        final SelectableTextInput entryField2 = goToConfigure(r).getElementByName("_." + entry);
+        assertThat(entryField2.getText()).isEqualTo("value-1 value-2");
     }
 
     @Test
@@ -145,8 +145,8 @@ class PoolConfigurationIT {
     }
 
     private void submitEntry(JenkinsRule r, HtmlPage page, String entry, String value) throws Exception {
-        final HtmlTextInput entryElement = page.getElementByName("_." + entry);
-        entryElement.setValue(value);
+        final SelectableTextInput entryElement = page.getElementByName("_." + entry);
+        entryElement.setText(value);
         r.submit(page.getFormByName("config"));
     }
 
