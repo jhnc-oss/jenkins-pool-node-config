@@ -108,9 +108,9 @@ public class PoolConfiguration extends GlobalConfiguration {
         }
 
         @RequirePOST
-        public FormValidation doCheckKeepOfflineNodes(@QueryParameter String nodes) {
+        public FormValidation doCheckKeepOfflineNodes(@QueryParameter String keepOfflineNodes) {
             checkPermission(Jenkins.ADMINISTER);
-            return validateParameter(nodes, "Keep offline Nodes");
+            return validateParameter(keepOfflineNodes, "Keep offline Nodes");
         }
 
         @NonNull
