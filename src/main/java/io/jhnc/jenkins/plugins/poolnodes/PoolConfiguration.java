@@ -115,7 +115,7 @@ public class PoolConfiguration extends GlobalConfiguration {
 
         @NonNull
         public String getPoolLabels() {
-            return labelAtomsToString(poolLabelAtoms);
+            return labelAtomsToString(poolLabelAtoms, " ");
         }
 
         @NonNull
@@ -168,7 +168,7 @@ public class PoolConfiguration extends GlobalConfiguration {
         }
 
         public String getKeepOfflineNodes() {
-            return labelAtomsToString(keepOfflineNodes);
+            return labelAtomsToString(keepOfflineNodes, "\n");
         }
 
         @NonNull
@@ -210,10 +210,10 @@ public class PoolConfiguration extends GlobalConfiguration {
         }
 
         @NonNull
-        private String labelAtomsToString(Set<LabelAtom> labelAtoms) {
+        private String labelAtomsToString(Set<LabelAtom> labelAtoms, @NonNull String delimiter) {
             return Objects.<Set<LabelAtom>>requireNonNullElse(labelAtoms, Collections.emptySet()).stream()
                     .map(LabelAtom::getExpression)
-                    .collect(Collectors.joining(" "));
+                    .collect(Collectors.joining(delimiter));
         }
     }
 }
