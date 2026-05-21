@@ -376,7 +376,7 @@ class PoolConfigurationTest {
     void setKeepOfflineNodesTrimsString() {
         final PoolConfiguration.DescriptorImpl descriptor = create();
         descriptor.setKeepOfflineNodes(" host-1   ho-s-t-2  h-ost-3  ");
-        assertThat(descriptor.getKeepOfflineNodes().split(" "))
+        assertThat(descriptor.getKeepOfflineNodes().split("\n"))
                 .asList().containsExactly("host-1", "ho-s-t-2", "h-ost-3");
         assertThat(descriptor.getKeepOfflineNodesLabelAtoms()).containsExactlyElementsIn(asLabelAtoms(List.of("host-1", "ho-s-t-2", "h-ost-3")));
     }
@@ -405,7 +405,7 @@ class PoolConfigurationTest {
         final JSONObject json = new JSONObject().element("keepOfflineNodes", "host.a host.b host.c");
 
         descriptor.configure(req, json);
-        assertThat(descriptor.getKeepOfflineNodes().split(" "))
+        assertThat(descriptor.getKeepOfflineNodes().split("\n"))
                 .asList().containsExactly("host.a", "host.b", "host.c");
         assertThat(descriptor.getKeepOfflineNodesLabelAtoms())
                 .containsExactlyElementsIn(asLabelAtoms(List.of("host.a", "host.b", "host.c")));

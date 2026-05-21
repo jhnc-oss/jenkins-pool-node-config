@@ -96,7 +96,7 @@ class PoolConfigurationIT {
         assertThat(getValuesFromDescriptor(descriptor, entry)).containsExactly("value-1", "value-2");
 
         final SelectableTextInput entryField2 = goToConfigure(r).getElementByName("_." + entry);
-        assertThat(entryField2.getText()).isEqualTo("value-1 value-2");
+        assertThat(entryField2.getText()).matches("value-1\\svalue-2");
     }
 
     @Test
@@ -141,7 +141,7 @@ class PoolConfigurationIT {
 
     private Collection<String> getValuesFromDescriptor(PoolConfiguration.DescriptorImpl descriptor, String entry)
             throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
-        return Arrays.asList(getValueFromDescriptor(descriptor, entry).split(" "));
+        return Arrays.asList(getValueFromDescriptor(descriptor, entry).split("\\s"));
     }
 
     private void submitEntry(JenkinsRule r, HtmlPage page, String entry, String value) throws Exception {
